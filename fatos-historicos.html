@@ -1,504 +1,1190 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lab Cosmos - Mecânica e Funcionamento do Jogo</title>
+    <title>Level Up Typing</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @keyframes pixelPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background-color: #0a0a20;
+            color: #fff;
+            overflow-x: hidden;
         }
         
-        @keyframes neonGlow {
-            0% { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #0073e6, 0 0 20px #0073e6; }
-            50% { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #0073e6, 0 0 40px #0073e6; }
-            100% { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #0073e6, 0 0 20px #0073e6; }
+        .pixel-border {
+            border: 4px solid #00fffc;
+            box-shadow: 0 0 10px #00fffc, inset 0 0 10px #00fffc;
         }
         
-        .pixel-art {
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            image-rendering: crisp-edges;
+        .pixel-text {
+            text-shadow: 0 0 5px #00fffc, 0 0 10px #00fffc;
         }
         
-        .pixel-button {
-            position: relative;
-            border: 4px solid #0ff;
-            box-shadow: 0 0 10px #0ff, inset 0 0 10px #0ff;
-            transition: all 0.3s;
+        .neon-effect {
+            animation: neon-pulse 1.5s infinite alternate;
         }
         
-        .pixel-button:hover {
-            box-shadow: 0 0 20px #0ff, inset 0 0 20px #0ff;
-            transform: translateY(-2px);
+        @keyframes neon-pulse {
+            from {
+                text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #00fffc, 0 0 20px #00fffc;
+            }
+            to {
+                text-shadow: 0 0 10px #fff, 0 0 15px #00fffc, 0 0 20px #00fffc, 0 0 25px #00fffc;
+            }
         }
         
-        .pixel-button:active {
-            transform: translateY(1px);
-        }
-        
-        .pixel-button::before {
-            content: '';
+        .star {
             position: absolute;
-            top: 2px;
-            left: 2px;
-            right: 2px;
-            bottom: 2px;
-            border: 2px solid rgba(255,255,255,0.3);
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out;
         }
         
-        .neon-text {
-            animation: neonGlow 2s infinite;
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
         }
         
-        .scanlines {
-            position: relative;
-        }
-        
-        .scanlines::after {
-            content: "";
+        .particle {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                to bottom,
-                rgba(0, 0, 0, 0) 50%,
-                rgba(0, 0, 0, 0.2) 51%
-            );
-            background-size: 100% 4px;
+            background-color: #00fffc;
+            border-radius: 50%;
             pointer-events: none;
-        }
-        
-        .element-icon {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid #4a5568;
-            border-radius: 4px;
-            cursor: grab;
-            transition: all 0.2s;
-        }
-        
-        .element-icon:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
-        }
-        
-        .fusion-bench {
-            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-            border: 4px solid #4a5568;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-        }
-        
-        .phase-card {
-            transition: all 0.3s;
-            border: 2px solid #2d3748;
-        }
-        
-        .phase-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 255, 255, 0.2);
-            border-color: #0ff;
-        }
-        
-        .locked-phase {
-            filter: grayscale(80%);
             opacity: 0.7;
         }
         
-        .unlocked-phase {
-            border-color: #0ff;
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        .pixel-btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .pixel-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 255, 252, 0.4);
+        }
+        
+        .pixel-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .pixel-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 252, 0.4), transparent);
+            transition: all 0.5s;
+        }
+        
+        .pixel-btn:hover::after {
+            left: 100%;
+        }
+        
+        .typing-input {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 3px solid #00fffc;
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+            padding: 10px;
+            outline: none;
+        }
+        
+        .typing-input:focus {
+            box-shadow: 0 0 10px #00fffc;
+        }
+        
+        .correct {
+            animation: correct-animation 0.5s;
+        }
+        
+        @keyframes correct-animation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); color: #00ff00; }
+            100% { transform: scale(1); }
+        }
+        
+        .wrong {
+            animation: wrong-animation 0.5s;
+        }
+        
+        @keyframes wrong-animation {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); color: #ff0000; }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--color1), var(--color2));
+            box-shadow: 0 0 20px var(--color1);
+            animation: float var(--duration) infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-100 font-mono min-h-screen">
-    <!-- Main Menu Screen -->
-    <div id="main-menu" class="fixed inset-0 flex flex-col items-center justify-center bg-gray-900 z-50 p-4 scanlines">
-        <div class="mb-8 animate-pulse">
-            <div class="text-5xl md:text-7xl font-bold text-center mb-4 neon-text">
-                LAB COSMOS
-            </div>
-            <div class="pixel-art mx-auto w-32 h-32 bg-blue-500 mb-8" style="animation: pixelPulse 2s infinite;"></div>
-        </div>
-        
-        <div class="max-w-md text-center mb-12 px-4">
-            <p class="text-lg md:text-xl mb-6">
-                "Você é um cientista perdido no espaço, sua missão é sintetizar substâncias para resolver enigmas e avançar pelos setores cósmicos. Descubra, combine e aprenda a dominar os elementos para restaurar o laboratório perdido."
-            </p>
-        </div>
-        
-        <div class="flex flex-col space-y-6 w-full max-w-xs">
-            <button id="start-game" class="pixel-button bg-blue-600 text-white py-4 px-8 text-xl font-bold mx-auto neon-text">
-                START
-            </button>
-            
-            <button class="menu-option bg-gray-800 hover:bg-gray-700 text-white py-3 px-6 rounded-lg text-lg flex items-center justify-center">
-                <i class="fas fa-gamepad mr-2"></i> Iniciar Jogo
-            </button>
-            <button class="menu-option bg-gray-800 hover:bg-gray-700 text-white py-3 px-6 rounded-lg text-lg flex items-center justify-center">
-                <i class="fas fa-cog mr-2"></i> Opções
-            </button>
-            <button class="menu-option bg-gray-800 hover:bg-gray-700 text-white py-3 px-6 rounded-lg text-lg flex items-center justify-center">
-                <i class="fas fa-door-open mr-2"></i> Sair
-            </button>
-        </div>
-    </div>
-
-    <!-- Phase Selection Screen -->
-    <div id="phase-selection" class="hidden min-h-screen p-6 scanlines">
-        <div class="container mx-auto">
-            <h1 class="text-3xl md:text-4xl font-bold mb-8 text-center neon-text">Seleção de Fases</h1>
-            
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                <!-- Phase 1 -->
-                <div class="phase-card bg-gray-800 p-4 rounded-lg flex flex-col items-center unlocked-phase">
-                    <div class="w-16 h-16 bg-blue-500 rounded-full mb-2 flex items-center justify-center text-xl font-bold">1</div>
-                    <h3 class="font-bold mb-1">Água</h3>
-                    <p class="text-sm text-center text-gray-300">Apagar fogo</p>
-                </div>
-                
-                <!-- Phase 2 -->
-                <div class="phase-card bg-gray-800 p-4 rounded-lg flex flex-col items-center locked-phase">
-                    <div class="w-16 h-16 bg-gray-700 rounded-full mb-2 flex items-center justify-center text-xl font-bold">2</div>
-                    <h3 class="font-bold mb-1">Oxigênio</h3>
-                    <p class="text-sm text-center text-gray-500">Liberar sala sem ar</p>
-                </div>
-                
-                <!-- Phase 3 -->
-                <div class="phase-card bg-gray-800 p-4 rounded-lg flex flex-col items-center locked-phase">
-                    <div class="w-16 h-16 bg-gray-700 rounded-full mb-2 flex items-center justify-center text-xl font-bold">3</div>
-                    <h3 class="font-bold mb-1">Óleo</h3>
-                    <p class="text-sm text-center text-gray-500">Consertar engrenagens</p>
-                </div>
-                
-                <!-- Phases 4-19 -->
-                <div class="phase-card bg-gray-800 p-4 rounded-lg flex flex-col items-center locked-phase">
-                    <div class="w-16 h-16 bg-gray-700 rounded-full mb-2 flex items-center justify-center text-xl font-bold">4</div>
-                    <h3 class="font-bold mb-1">?</h3>
-                    <p class="text-sm text-center text-gray-500">Bloqueado</p>
-                </div>
-                
-                <div class="phase-card bg-gray-800 p-4 rounded-lg flex flex-col items-center locked-phase">
-                    <div class="w-16 h-16 bg-gray-700 rounded-full mb-2 flex items-center justify-center text-xl font-bold">5</div>
-                    <h3 class="font-bold mb-1">?</h3>
-                    <p class="text-sm text-center text-gray-500">Bloqueado</p>
-                </div>
-                
-                <div class="phase-card bg-gray-800 p-4 rounded-lg flex flex-col items-center locked-phase">
-                    <div class="w-16 h-16 bg-gray-700 rounded-full mb-2 flex items-center justify-center text-xl font-bold">6</div>
-                    <h3 class="font-bold mb-1">?</h3>
-                    <p class="text-sm text-center text-gray-500">Bloqueado</p>
-                </div>
-                
-                <div class="phase-card bg-gray-800 p-4 rounded-lg flex flex-col items-center locked-phase">
-                    <div class="w-16 h-16 bg-gray-700 rounded-full mb-2 flex items-center justify-center text-xl font-bold">7</div>
-                    <h3 class="font-bold mb-1">?</h3>
-                    <p class="text-sm text-center text-gray-500">Bloqueado</p>
-                </div>
-                
-                <div class="phase-card bg-gray-800 p-4 rounded-lg flex flex-col items-center locked-phase">
-                    <div class="w-16 h-16 bg-gray-700 rounded-full mb-2 flex items-center justify-center text-xl font-bold">8</div>
-                    <h3 class="font-bold mb-1">?</h3>
-                    <p class="text-sm text-center text-gray-500">Bloqueado</p>
-                </div>
-                
-                <!-- Final Phase -->
-                <div class="phase-card bg-gray-800 p-4 rounded-lg flex flex-col items-center locked-phase col-span-2 sm:col-span-3 md:col-span-4 lg:col-span-5">
-                    <div class="w-16 h-16 bg-purple-700 rounded-full mb-2 flex items-center justify-center text-xl font-bold">20</div>
-                    <h3 class="font-bold mb-1 text-xl">Elemento Cósmico Supremo</h3>
-                    <p class="text-sm text-center text-gray-500">Final épico</p>
-                </div>
+<body class="min-h-screen relative overflow-hidden">
+    <!-- Stars background -->
+    <div id="stars-container"></div>
+    
+    <!-- Planets -->
+    <div class="planet" style="--color1: #ff00aa; --color2: #8800ff; --duration: 20s; width: 100px; height: 100px; top: 20%; left: 10%;"></div>
+    <div class="planet" style="--color1: #00ffaa; --color2: #0088ff; --duration: 25s; width: 80px; height: 80px; top: 70%; left: 80%;"></div>
+    <div class="planet" style="--color1: #ffaa00; --color2: #ff5500; --duration: 30s; width: 60px; height: 60px; top: 40%; left: 85%;"></div>
+    
+    <!-- Main container -->
+    <div class="container mx-auto px-4 py-8 relative z-10 min-h-screen flex flex-col">
+        <!-- Main menu -->
+        <div id="main-menu" class="flex flex-col items-center justify-center flex-grow">
+            <div class="mb-12 text-center">
+                <h1 class="text-5xl md:text-7xl mb-4 pixel-text neon-effect">LEVEL UP TYPING</h1>
+                <p class="text-lg md:text-xl text-cyan-300">Teste suas habilidades de digitação!</p>
             </div>
             
-            <div class="mt-8 flex justify-center">
-                <button id="back-to-menu" class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-6 rounded-lg flex items-center">
-                    <i class="fas fa-arrow-left mr-2"></i> Voltar
+            <div class="flex flex-col space-y-6 w-full max-w-md">
+                <button onclick="showModeMenu()" class="pixel-btn bg-cyan-600 hover:bg-cyan-500 text-white py-4 px-8 rounded-none pixel-border text-xl md:text-2xl">
+                    <i class="fas fa-play mr-2"></i> COMEÇAR
+                </button>
+                <button onclick="showRankings()" class="pixel-btn bg-purple-600 hover:bg-purple-500 text-white py-4 px-8 rounded-none pixel-border text-xl md:text-2xl">
+                    <i class="fas fa-trophy mr-2"></i> RANKINGS
                 </button>
             </div>
+            
+            <div class="mt-auto pt-8 text-xs text-cyan-300 opacity-70">
+                <p>Desenvolvido por Time Pixel</p>
+                <p>Versão 1.0.0</p>
+            </div>
         </div>
-    </div>
-
-    <!-- Game Screen -->
-    <div id="game-screen" class="hidden min-h-screen p-4 scanlines">
-        <div class="container mx-auto">
-            <!-- Game Header -->
-            <div class="flex justify-between items-center mb-6">
-                <div class="flex items-center">
-                    <button id="pause-game" class="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg mr-4">
-                        <i class="fas fa-pause"></i>
+        
+        <!-- Mode selection menu -->
+        <div id="mode-menu" class="hidden flex-col items-center justify-center flex-grow">
+            <h2 class="text-3xl md:text-5xl mb-8 pixel-text">ESCOLHA O MODO</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
+                <div onclick="startGame('syllables')" class="pixel-btn bg-blue-600 hover:bg-blue-500 text-white p-6 rounded-none pixel-border cursor-pointer transition-all hover:scale-105">
+                    <h3 class="text-xl md:text-2xl mb-2">Sílabas Rápidas</h3>
+                    <p class="text-sm opacity-80">Digite sílabas que aparecem rapidamente</p>
+                </div>
+                
+                <div onclick="startGame('sentences')" class="pixel-btn bg-green-600 hover:bg-green-500 text-white p-6 rounded-none pixel-border cursor-pointer transition-all hover:scale-105">
+                    <h3 class="text-xl md:text-2xl mb-2">Frases Relâmpago</h3>
+                    <p class="text-sm opacity-80">Complete frases curtas rapidamente</p>
+                </div>
+                
+                <div onclick="startGame('interpretation')" class="pixel-btn bg-yellow-600 hover:bg-yellow-500 text-white p-6 rounded-none pixel-border cursor-pointer transition-all hover:scale-105">
+                    <h3 class="text-xl md:text-2xl mb-2">Interpretação Express</h3>
+                    <p class="text-sm opacity-80">Leia e escolha a resposta correta</p>
+                </div>
+                
+                <div onclick="startGame('logic')" class="pixel-btn bg-red-600 hover:bg-red-500 text-white p-6 rounded-none pixel-border cursor-pointer transition-all hover:scale-105">
+                    <h3 class="text-xl md:text-2xl mb-2">Conexão Lógica</h3>
+                    <p class="text-sm opacity-80">Organize palavras em sequência</p>
+                </div>
+                
+                <div onclick="startGame('creative')" class="pixel-btn bg-purple-600 hover:bg-purple-500 text-white p-6 rounded-none pixel-border cursor-pointer transition-all hover:scale-105 col-span-1 md:col-span-2">
+                    <h3 class="text-xl md:text-2xl mb-2">Modo Criativo</h3>
+                    <p class="text-sm opacity-80">Crie sua própria sala personalizada</p>
+                </div>
+            </div>
+            
+            <button onclick="backToMainMenu()" class="mt-8 pixel-btn bg-gray-700 hover:bg-gray-600 text-white py-3 px-6 rounded-none pixel-border">
+                <i class="fas fa-arrow-left mr-2"></i> VOLTAR
+            </button>
+        </div>
+        
+        <!-- Game screen -->
+        <div id="game-screen" class="hidden flex-col items-center justify-center flex-grow w-full">
+            <div class="w-full max-w-4xl">
+                <!-- Game HUD -->
+                <div class="flex justify-between items-center mb-8">
+                    <div class="pixel-border p-3 bg-black bg-opacity-70">
+                        <span class="text-cyan-300">Pontos:</span> <span id="score">0</span>
+                    </div>
+                    <div class="pixel-border p-3 bg-black bg-opacity-70 text-xl">
+                        <span id="timer">30</span>s
+                    </div>
+                    <div class="pixel-border p-3 bg-black bg-opacity-70 hidden" id="ranking-container">
+                        <span class="text-cyan-300">Ranking:</span> <span id="ranking">-</span>
+                    </div>
+                </div>
+                
+                <!-- Game content -->
+                <div id="game-content" class="pixel-border p-8 bg-black bg-opacity-50 mb-8 min-h-48 flex items-center justify-center">
+                    <p id="game-text" class="text-2xl md:text-4xl text-center">Preparando o jogo...</p>
+                </div>
+                
+                <!-- Input area -->
+                <div class="flex flex-col md:flex-row gap-4">
+                    <input type="text" id="typing-input" class="typing-input flex-grow text-xl md:text-2xl" placeholder="Digite aqui...">
+                    <button id="submit-btn" class="pixel-btn bg-cyan-600 hover:bg-cyan-500 text-white py-4 px-6 rounded-none pixel-border text-xl">
+                        ENVIAR
                     </button>
-                    <h2 class="text-xl md:text-2xl font-bold">Fase 1: Criar Água</h2>
                 </div>
-                <div class="bg-gray-800 px-4 py-2 rounded-lg">
-                    <span class="font-bold">Objetivo:</span> Apagar fogo
+                
+                <!-- Progress bar (for some modes) -->
+                <div id="progress-container" class="mt-4 hidden">
+                    <div class="pixel-border p-1">
+                        <div id="progress-bar" class="h-4 bg-cyan-500" style="width: 0%"></div>
+                    </div>
+                    <p class="text-right text-sm mt-1"><span id="progress-text">0</span>/10</p>
                 </div>
+                
+                <!-- Options (for interpretation mode) -->
+                <div id="options-container" class="grid grid-cols-1 gap-2 mt-4 hidden">
+                    <!-- Options will be added dynamically -->
+                </div>
+                
+                <!-- Creative mode controls -->
+                <div id="creative-controls" class="mt-4 hidden">
+                    <div class="flex flex-col md:flex-row gap-4 mb-4">
+                        <select id="creative-type" class="typing-input flex-grow">
+                            <option value="syllables">Sílabas</option>
+                            <option value="words">Palavras</option>
+                            <option value="sentences">Frases</option>
+                        </select>
+                        <input type="number" id="creative-time" class="typing-input w-24" min="30" max="60" value="30" placeholder="Tempo (s)">
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-4 mb-4">
+                        <input type="text" id="creative-input" class="typing-input flex-grow" placeholder="Adicione itens (separados por vírgula)">
+                        <button onclick="addCreativeItems()" class="pixel-btn bg-green-600 hover:bg-green-500 text-white py-3 px-4 rounded-none pixel-border">
+                            <i class="fas fa-plus mr-2"></i> ADICIONAR
+                        </button>
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-sm mb-2">Itens adicionados:</p>
+                        <div id="creative-items" class="pixel-border p-3 bg-black bg-opacity-50 min-h-12"></div>
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <button onclick="generateRoomCode()" class="pixel-btn bg-purple-600 hover:bg-purple-500 text-white py-3 px-6 rounded-none pixel-border flex-grow">
+                            <i class="fas fa-qrcode mr-2"></i> GERAR CÓDIGO
+                        </button>
+                        <button onclick="startCreativeGame()" class="pixel-btn bg-cyan-600 hover:bg-cyan-500 text-white py-3 px-6 rounded-none pixel-border flex-grow">
+                            <i class="fas fa-play mr-2"></i> INICIAR
+                        </button>
+                    </div>
+                    <div id="room-code-container" class="mt-4 hidden text-center">
+                        <p class="text-sm mb-1">Código da sala:</p>
+                        <p id="room-code" class="text-2xl font-bold pixel-text"></p>
+                    </div>
+                </div>
+                
+                <!-- Back button -->
+                <button onclick="backToModeMenu()" class="mt-8 pixel-btn bg-gray-700 hover:bg-gray-600 text-white py-3 px-6 rounded-none pixel-border">
+                    <i class="fas fa-arrow-left mr-2"></i> VOLTAR
+                </button>
+            </div>
+        </div>
+        
+        <!-- Rankings screen -->
+        <div id="rankings-screen" class="hidden flex-col items-center justify-center flex-grow w-full">
+            <h2 class="text-3xl md:text-5xl mb-8 pixel-text">RANKINGS</h2>
+            
+            <div class="w-full max-w-4xl">
+                <div class="flex mb-4">
+                    <button onclick="showGlobalRankings()" class="pixel-btn bg-cyan-600 hover:bg-cyan-500 text-white py-2 px-4 rounded-none pixel-border mr-2">
+                        Global
+                    </button>
+                    <button onclick="showModeRankings('syllables')" class="pixel-btn bg-blue-600 hover:bg-blue-500 text-white py-2 px-4 rounded-none pixel-border mr-2">
+                        Sílabas
+                    </button>
+                    <button onclick="showModeRankings('sentences')" class="pixel-btn bg-green-600 hover:bg-green-500 text-white py-2 px-4 rounded-none pixel-border mr-2">
+                        Frases
+                    </button>
+                    <button onclick="showModeRankings('interpretation')" class="pixel-btn bg-yellow-600 hover:bg-yellow-500 text-white py-2 px-4 rounded-none pixel-border mr-2">
+                        Interpretação
+                    </button>
+                    <button onclick="showModeRankings('logic')" class="pixel-btn bg-red-600 hover:bg-red-500 text-white py-2 px-4 rounded-none pixel-border">
+                        Lógica
+                    </button>
+                </div>
+                
+                <div id="rankings-container" class="pixel-border p-4 bg-black bg-opacity-50">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-cyan-500">
+                                <th class="text-left py-2">Posição</th>
+                                <th class="text-left py-2">Jogador</th>
+                                <th class="text-left py-2">Pontos</th>
+                                <th class="text-left py-2">Palavras</th>
+                                <th class="text-left py-2">Tempo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rankings-table">
+                            <!-- Rankings will be added dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button onclick="backToMainMenu()" class="mt-8 pixel-btn bg-gray-700 hover:bg-gray-600 text-white py-3 px-6 rounded-none pixel-border">
+                    <i class="fas fa-arrow-left mr-2"></i> VOLTAR
+                </button>
+            </div>
+        </div>
+        
+        <!-- Spectator mode -->
+        <div id="spectator-screen" class="hidden flex-col items-center justify-center flex-grow w-full">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl md:text-5xl mb-4 text-red-500 pixel-text">VOCÊ ESTÁ ELIMINADO</h2>
+                <p class="text-xl text-cyan-300">MODO ESPECTADOR</p>
             </div>
             
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Left Column - Inventory -->
-                <div class="bg-gray-800 p-4 rounded-lg">
-                    <h3 class="text-lg font-bold mb-4 border-b border-gray-700 pb-2 flex items-center">
-                        <i class="fas fa-box-open mr-2"></i> Inventário
-                    </h3>
-                    <div class="grid grid-cols-4 gap-2">
-                        <div class="element-icon bg-blue-100 text-blue-800" draggable="true" data-element="H">
-                            H
+            <div class="w-full max-w-4xl">
+                <div class="flex justify-between items-center mb-8">
+                    <div class="pixel-border p-3 bg-black bg-opacity-70">
+                        <span class="text-cyan-300">Seus pontos:</span> <span id="spectator-score">0</span>
+                    </div>
+                    <div class="pixel-border p-3 bg-black bg-opacity-70">
+                        <span class="text-cyan-300">Tempo restante:</span> <span id="spectator-timer">30</span>s
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="pixel-border p-4 bg-black bg-opacity-50">
+                        <h3 class="text-xl mb-4 text-center">Jogadores Ativos</h3>
+                        <div id="active-players" class="space-y-2">
+                            <!-- Active players will be added dynamically -->
                         </div>
-                        <div class="element-icon bg-blue-100 text-blue-800" draggable="true" data-element="H">
-                            H
-                        </div>
-                        <div class="element-icon bg-red-100 text-red-800" draggable="true" data-element="O">
-                            O
-                        </div>
-                        <div class="element-icon bg-gray-300 text-gray-800" draggable="true" data-element="Na">
-                            Na
-                        </div>
-                        <div class="element-icon bg-green-100 text-green-800" draggable="true" data-element="Cl">
-                            Cl
-                        </div>
-                        <div class="element-icon bg-yellow-100 text-yellow-800" draggable="true" data-element="S">
-                            S
-                        </div>
-                        <div class="element-icon bg-purple-100 text-purple-800" draggable="true" data-element="K">
-                            K
-                        </div>
-                        <div class="element-icon bg-indigo-100 text-indigo-800" draggable="true" data-element="Fe">
-                            Fe
+                    </div>
+                    
+                    <div class="pixel-border p-4 bg-black bg-opacity-50">
+                        <h3 class="text-xl mb-4 text-center">Ranking Atual</h3>
+                        <div id="spectator-ranking" class="space-y-2">
+                            <!-- Current ranking will be added dynamically -->
                         </div>
                     </div>
                 </div>
                 
-                <!-- Center Column - Fusion Bench -->
-                <div class="fusion-bench p-6 rounded-lg lg:col-span-2">
-                    <h3 class="text-lg font-bold mb-4 border-b border-gray-600 pb-2 flex items-center">
-                        <i class="fas fa-flask mr-2"></i> Bancada de Fusão
-                    </h3>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <!-- Fusion Area -->
-                        <div class="bg-gray-700 p-4 rounded-lg md:col-span-2 min-h-40 flex items-center justify-center" id="fusion-area">
-                            <p class="text-gray-400">Arraste elementos aqui para combiná-los</p>
-                        </div>
-                        
-                        <!-- Controls -->
-                        <div class="bg-gray-700 p-4 rounded-lg">
-                            <h4 class="font-bold mb-2">Controles</h4>
-                            <div class="space-y-3">
-                                <button class="control-btn bg-blue-600 hover:bg-blue-700 text-white w-full py-2 rounded flex items-center justify-center">
-                                    <i class="fas fa-fire mr-2"></i> Aquecer
-                                </button>
-                                <button class="control-btn bg-blue-400 hover:bg-blue-500 text-white w-full py-2 rounded flex items-center justify-center">
-                                    <i class="fas fa-snowflake mr-2"></i> Resfriar
-                                </button>
-                                <button class="control-btn bg-purple-600 hover:bg-purple-700 text-white w-full py-2 rounded flex items-center justify-center">
-                                    <i class="fas fa-random mr-2"></i> Misturar
-                                </button>
-                            </div>
-                            
-                            <div class="mt-4 pt-4 border-t border-gray-600">
-                                <button id="fuse-button" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-bold flex items-center justify-center">
-                                    <i class="fas fa-atom mr-2"></i> Fundir Elementos
-                                </button>
-                            </div>
-                        </div>
+                <div class="pixel-border p-4 bg-black bg-opacity-50 mb-4 hidden" id="spectator-chat">
+                    <div id="chat-messages" class="h-40 overflow-y-auto mb-2">
+                        <!-- Chat messages will be added dynamically -->
                     </div>
-                    
-                    <!-- Result Area -->
-                    <div class="bg-gray-700 p-4 rounded-lg">
-                        <h4 class="font-bold mb-2">Resultado</h4>
-                        <div id="result-area" class="min-h-20 bg-gray-800 rounded flex items-center justify-center">
-                            <p class="text-gray-400">Aguardando fusão...</p>
-                        </div>
+                    <div class="flex">
+                        <input type="text" id="chat-input" class="typing-input flex-grow" placeholder="Pressione TAB para enviar mensagem">
                     </div>
                 </div>
-            </div>
-            
-            <!-- Scene Interaction -->
-            <div class="mt-6 bg-gray-800 p-4 rounded-lg">
-                <h3 class="text-lg font-bold mb-4 border-b border-gray-700 pb-2 flex items-center">
-                    <i class="fas fa-fire mr-2"></i> Cenário - Incêndio no Laboratório
-                </h3>
-                <div class="flex flex-col md:flex-row items-center">
-                    <div class="w-full md:w-1/3 mb-4 md:mb-0 md:mr-6">
-                        <div class="bg-gray-700 h-40 rounded-lg flex items-center justify-center pixel-art">
-                            <i class="fas fa-fire text-5xl text-orange-500"></i>
-                        </div>
-                    </div>
-                    <div class="flex-1">
-                        <p class="mb-4">O laboratório está em chamas! Você precisa criar água rapidamente para apagar o fogo antes que destrua equipamentos importantes.</p>
-                        <div class="flex space-x-4">
-                            <button id="use-water" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg flex items-center hidden">
-                                <i class="fas fa-tint mr-2"></i> Usar Água
-                            </button>
-                            <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg flex items-center">
-                                <i class="fas fa-lightbulb mr-2"></i> Dica
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Knowledge Popup -->
-    <div id="knowledge-popup" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
-        <div class="bg-gray-800 rounded-lg max-w-md w-full p-6 border-2 border-blue-500">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-blue-400 flex items-center">
-                    <i class="fas fa-info-circle mr-2"></i> Novo Composto Criado!
-                </h3>
-                <button id="close-popup" class="text-gray-400 hover:text-white">
-                    <i class="fas fa-times"></i>
+                
+                <button onclick="backToModeMenu()" class="mt-4 pixel-btn bg-gray-700 hover:bg-gray-600 text-white py-3 px-6 rounded-none pixel-border">
+                    <i class="fas fa-arrow-left mr-2"></i> VOLTAR AO MENU
                 </button>
             </div>
-            <div class="mb-4 p-4 bg-gray-700 rounded-lg">
-                <div class="text-3xl font-bold text-center mb-2">H₂O</div>
-                <div class="text-center text-blue-300 font-bold mb-2">Água</div>
-                <p class="text-sm">Essencial para a vida, usada para beber, cozinhar e apagar incêndios.</p>
-            </div>
-            <button id="continue-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg">
-                Continuar
-            </button>
         </div>
     </div>
 
     <script>
-        // Navigation between screens
-        document.getElementById('start-game').addEventListener('click', function() {
-            document.getElementById('main-menu').classList.add('hidden');
-            document.getElementById('phase-selection').classList.remove('hidden');
-        });
+        // Game state
+        let currentScreen = 'main-menu';
+        let currentMode = '';
+        let score = 0;
+        let timeLeft = 30;
+        let timerInterval;
+        let gameActive = false;
+        let currentChallengeIndex = 0;
+        let challenges = [];
+        let creativeItems = [];
         
-        document.getElementById('back-to-menu').addEventListener('click', function() {
-            document.getElementById('phase-selection').classList.add('hidden');
-            document.getElementById('main-menu').classList.remove('hidden');
-        });
-        
-        // Start first phase
-        document.querySelector('.unlocked-phase').addEventListener('click', function() {
-            document.getElementById('phase-selection').classList.add('hidden');
-            document.getElementById('game-screen').classList.remove('hidden');
-        });
-        
-        // Pause game
-        document.getElementById('pause-game').addEventListener('click', function() {
-            alert('Jogo pausado - Menu de pausa seria exibido aqui');
-        });
-        
-        // Drag and drop functionality
-        const elements = document.querySelectorAll('.element-icon');
-        const fusionArea = document.getElementById('fusion-area');
-        const fuseButton = document.getElementById('fuse-button');
-        const resultArea = document.getElementById('result-area');
-        const useWaterBtn = document.getElementById('use-water');
-        const knowledgePopup = document.getElementById('knowledge-popup');
-        
-        let draggedElement = null;
-        let elementsInFusion = [];
-        
-        elements.forEach(element => {
-            element.addEventListener('dragstart', function() {
-                draggedElement = this;
-                setTimeout(() => {
-                    this.style.opacity = '0.4';
-                }, 0);
-            });
-            
-            element.addEventListener('dragend', function() {
-                this.style.opacity = '1';
-            });
-        });
-        
-        fusionArea.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            this.style.backgroundColor = 'rgba(74, 85, 104, 0.5)';
-        });
-        
-        fusionArea.addEventListener('dragleave', function() {
-            this.style.backgroundColor = '';
-        });
-        
-        fusionArea.addEventListener('drop', function(e) {
-            e.preventDefault();
-            this.style.backgroundColor = '';
-            
-            if (draggedElement && elementsInFusion.length < 3) {
-                const elementClone = draggedElement.cloneNode(true);
-                elementClone.classList.add('mx-auto', 'my-1');
-                elementClone.draggable = false;
-                this.appendChild(elementClone);
-                elementsInFusion.push(draggedElement.getAttribute('data-element'));
+        // Sample data for the game
+        const syllables = ['ba', 'be', 'bi', 'bo', 'bu', 'ca', 'ce', 'ci', 'co', 'cu', 'da', 'de', 'di', 'do', 'du'];
+        const sentences = [
+            { text: "O gato pulou no _.", missing: "telhado" },
+            { text: "Eu gosto de comer _ no café da manhã.", missing: "pão" },
+            { text: "A cor do céu é _.", missing: "azul" },
+            { text: "2 + 2 é igual a _.", missing: "quatro" },
+            { text: "O Brasil fica na _.", missing: "América" }
+        ];
+        const interpretationQuestions = [
+            {
+                question: "Se hoje é segunda-feira, que dia será depois de amanhã?",
+                options: ["Terça-feira", "Quarta-feira", "Quinta-feira"],
+                correct: 1
+            },
+            {
+                question: "Qual é o antônimo de 'alto'?",
+                options: ["Grande", "Baixo", "Largo"],
+                correct: 1
+            },
+            {
+                question: "Complete: 'Cão que late não _.'",
+                options: ["Dorme", "Morde", "Corre"],
+                correct: 1
             }
+        ];
+        const logicChallenges = [
+            {
+                parts: ["Segunda", "Terça", "Quarta", "Quinta", "Sexta"],
+                correctOrder: [0, 1, 2, 3, 4]
+            },
+            {
+                parts: ["1", "2", "3", "4", "5"],
+                correctOrder: [0, 1, 2, 3, 4]
+            },
+            {
+                parts: ["Planta", "Florescer", "Semente", "Fruto"],
+                correctOrder: [2, 0, 1, 3]
+            }
+        ];
+        
+        // Sample rankings data
+        const rankings = {
+            global: [
+                { player: "PixelMaster", score: 450, words: 90, time: "30s" },
+                { player: "TypeNinja", score: 420, words: 84, time: "30s" },
+                { player: "FastFingers", score: 380, words: 76, time: "30s" },
+                { player: "CodeWarrior", score: 350, words: 70, time: "30s" },
+                { player: "ByteMe", score: 320, words: 64, time: "30s" }
+            ],
+            syllables: [
+                { player: "PixelMaster", score: 150, words: 15, time: "30s" },
+                { player: "TypeNinja", score: 140, words: 14, time: "30s" },
+                { player: "FastFingers", score: 130, words: 13, time: "30s" }
+            ],
+            sentences: [
+                { player: "PixelMaster", score: 100, words: 20, time: "45s" },
+                { player: "TypeNinja", score: 95, words: 19, time: "45s" },
+                { player: "FastFingers", score: 90, words: 18, time: "45s" }
+            ],
+            interpretation: [
+                { player: "PixelMaster", score: 90, words: 9, time: "30s" },
+                { player: "TypeNinja", score: 80, words: 8, time: "30s" },
+                { player: "FastFingers", score: 70, words: 7, time: "30s" }
+            ],
+            logic: [
+                { player: "PixelMaster", score: 60, words: 30, time: "30s" },
+                { player: "TypeNinja", score: 50, words: 25, time: "30s" },
+                { player: "FastFingers", score: 40, words: 20, time: "30s" }
+            ]
+        };
+        
+        // Active players sample data
+        const activePlayers = [
+            { name: "PixelMaster", score: 120 },
+            { name: "TypeNinja", score: 110 },
+            { name: "FastFingers", score: 90 },
+            { name: "CodeWarrior", score: 80 }
+        ];
+        
+        // Initialize the game
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            setupEventListeners();
         });
         
-        // Fusion logic
-        fuseButton.addEventListener('click', function() {
-            if (elementsInFusion.length < 2) {
-                resultArea.innerHTML = '<p class="text-red-400">Adicione pelo menos 2 elementos para fundir</p>';
+        // Create stars for the background
+        function createStars() {
+            const container = document.getElementById('stars-container');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                star.style.width = `${Math.random() * 3}px`;
+                star.style.height = star.style.width;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.opacity = Math.random();
+                star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+                container.appendChild(star);
+            }
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            document.getElementById('typing-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkAnswer();
+                }
+            });
+            
+            document.getElementById('submit-btn').addEventListener('click', checkAnswer);
+            
+            // TAB key for chat
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab' && currentScreen === 'spectator') {
+                    e.preventDefault();
+                    const chat = document.getElementById('spectator-chat');
+                    chat.classList.toggle('hidden');
+                    if (!chat.classList.contains('hidden')) {
+                        document.getElementById('chat-input').focus();
+                    }
+                }
+                
+                if (e.key === 'Enter' && currentScreen === 'spectator' && !document.getElementById('spectator-chat').classList.contains('hidden')) {
+                    sendChatMessage();
+                }
+            });
+        }
+        
+        // Show main menu
+        function showMainMenu() {
+            document.getElementById('main-menu').classList.remove('hidden');
+            document.getElementById('mode-menu').classList.add('hidden');
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('rankings-screen').classList.add('hidden');
+            document.getElementById('spectator-screen').classList.add('hidden');
+            currentScreen = 'main-menu';
+        }
+        
+        // Show mode selection menu
+        function showModeMenu() {
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('mode-menu').classList.remove('hidden');
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('rankings-screen').classList.add('hidden');
+            document.getElementById('spectator-screen').classList.add('hidden');
+            currentScreen = 'mode-menu';
+        }
+        
+        // Show rankings screen
+        function showRankings() {
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('mode-menu').classList.add('hidden');
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('rankings-screen').classList.remove('hidden');
+            document.getElementById('spectator-screen').classList.add('hidden');
+            currentScreen = 'rankings';
+            showGlobalRankings();
+        }
+        
+        // Show global rankings
+        function showGlobalRankings() {
+            const table = document.getElementById('rankings-table');
+            table.innerHTML = '';
+            
+            rankings.global.forEach((player, index) => {
+                const row = document.createElement('tr');
+                row.className = index % 2 === 0 ? 'bg-black bg-opacity-30' : '';
+                row.innerHTML = `
+                    <td class="py-2">${index + 1}º</td>
+                    <td class="py-2">${player.player}</td>
+                    <td class="py-2">${player.score}</td>
+                    <td class="py-2">${player.words}</td>
+                    <td class="py-2">${player.time}</td>
+                `;
+                table.appendChild(row);
+            });
+        }
+        
+        // Show mode-specific rankings
+        function showModeRankings(mode) {
+            const table = document.getElementById('rankings-table');
+            table.innerHTML = '';
+            
+            rankings[mode].forEach((player, index) => {
+                const row = document.createElement('tr');
+                row.className = index % 2 === 0 ? 'bg-black bg-opacity-30' : '';
+                row.innerHTML = `
+                    <td class="py-2">${index + 1}º</td>
+                    <td class="py-2">${player.player}</td>
+                    <td class="py-2">${player.score}</td>
+                    <td class="py-2">${player.words}</td>
+                    <td class="py-2">${player.time}</td>
+                `;
+                table.appendChild(row);
+            });
+        }
+        
+        // Back to main menu
+        function backToMainMenu() {
+            stopGame();
+            showMainMenu();
+        }
+        
+        // Back to mode menu
+        function backToModeMenu() {
+            stopGame();
+            showModeMenu();
+        }
+        
+        // Start the game with selected mode
+        function startGame(mode) {
+            currentMode = mode;
+            score = 0;
+            currentChallengeIndex = 0;
+            
+            // Reset UI
+            document.getElementById('score').textContent = score;
+            document.getElementById('game-text').className = 'text-2xl md:text-4xl text-center';
+            document.getElementById('typing-input').value = '';
+            document.getElementById('options-container').classList.add('hidden');
+            document.getElementById('progress-container').classList.add('hidden');
+            document.getElementById('creative-controls').classList.add('hidden');
+            
+            // Show game screen
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('mode-menu').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            document.getElementById('rankings-screen').classList.add('hidden');
+            document.getElementById('spectator-screen').classList.add('hidden');
+            currentScreen = 'game';
+            
+            // Setup game based on mode
+            switch(mode) {
+                case 'syllables':
+                    setupSyllablesMode();
+                    break;
+                case 'sentences':
+                    setupSentencesMode();
+                    break;
+                case 'interpretation':
+                    setupInterpretationMode();
+                    break;
+                case 'logic':
+                    setupLogicMode();
+                    break;
+                case 'creative':
+                    setupCreativeMode();
+                    return; // Don't start timer for creative mode
+                default:
+                    break;
+            }
+            
+            // Start timer
+            startTimer();
+            gameActive = true;
+        }
+        
+        // Setup syllables mode
+        function setupSyllablesMode() {
+            timeLeft = 30;
+            document.getElementById('timer').textContent = timeLeft;
+            document.getElementById('game-text').textContent = 'Preparado?';
+            
+            // Generate challenges
+            challenges = [];
+            for (let i = 0; i < 20; i++) {
+                challenges.push(syllables[Math.floor(Math.random() * syllables.length)]);
+            }
+            
+            // Show first challenge after delay
+            setTimeout(() => {
+                showNextChallenge();
+            }, 1000);
+        }
+        
+        // Setup sentences mode
+        function setupSentencesMode() {
+            timeLeft = 45;
+            document.getElementById('timer').textContent = timeLeft;
+            document.getElementById('game-text').textContent = 'Preparado?';
+            
+            // Generate challenges
+            challenges = [...sentences];
+            shuffleArray(challenges);
+            
+            // Show progress
+            document.getElementById('progress-container').classList.remove('hidden');
+            document.getElementById('progress-text').textContent = `0/${challenges.length}`;
+            document.getElementById('progress-bar').style.width = '0%';
+            
+            // Show first challenge after delay
+            setTimeout(() => {
+                showNextChallenge();
+            }, 1000);
+        }
+        
+        // Setup interpretation mode
+        function setupInterpretationMode() {
+            timeLeft = 30;
+            document.getElementById('timer').textContent = timeLeft;
+            document.getElementById('game-text').textContent = 'Preparado?';
+            
+            // Generate challenges
+            challenges = [...interpretationQuestions];
+            shuffleArray(challenges);
+            
+            // Show first challenge after delay
+            setTimeout(() => {
+                showNextChallenge();
+            }, 1000);
+        }
+        
+        // Setup logic mode
+        function setupLogicMode() {
+            timeLeft = 30;
+            document.getElementById('timer').textContent = timeLeft;
+            document.getElementById('game-text').textContent = 'Preparado?';
+            
+            // Generate challenges
+            challenges = [...logicChallenges];
+            shuffleArray(challenges);
+            
+            // Show first challenge after delay
+            setTimeout(() => {
+                showNextChallenge();
+            }, 1000);
+        }
+        
+        // Setup creative mode
+        function setupCreativeMode() {
+            document.getElementById('game-text').textContent = 'Modo Criativo';
+            document.getElementById('typing-input').classList.add('hidden');
+            document.getElementById('submit-btn').classList.add('hidden');
+            document.getElementById('creative-controls').classList.remove('hidden');
+            creativeItems = [];
+            document.getElementById('creative-items').innerHTML = '';
+            document.getElementById('room-code-container').classList.add('hidden');
+        }
+        
+        // Add items in creative mode
+        function addCreativeItems() {
+            const input = document.getElementById('creative-input').value;
+            if (!input) return;
+            
+            const items = input.split(',').map(item => item.trim()).filter(item => item);
+            creativeItems = [...creativeItems, ...items];
+            
+            document.getElementById('creative-input').value = '';
+            updateCreativeItemsDisplay();
+        }
+        
+        // Update creative items display
+        function updateCreativeItemsDisplay() {
+            const container = document.getElementById('creative-items');
+            container.innerHTML = '';
+            
+            if (creativeItems.length === 0) {
+                container.innerHTML = '<p class="text-sm opacity-50">Nenhum item adicionado ainda</p>';
                 return;
             }
             
-            // Simple water creation logic
-            if (elementsInFusion.includes('H') && elementsInFusion.includes('O') && 
-                elementsInFusion.filter(e => e === 'H').length >= 2) {
-                
-                // Success animation
-                resultArea.innerHTML = `
-                    <div class="text-center">
-                        <div class="text-4xl mb-2">💧</div>
-                        <p class="text-green-400 font-bold">Fusão bem-sucedida!</p>
-                        <p class="text-sm">H₂O criado!</p>
-                    </div>
+            creativeItems.forEach((item, index) => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'flex justify-between items-center mb-1';
+                itemElement.innerHTML = `
+                    <span>${item}</span>
+                    <button onclick="removeCreativeItem(${index})" class="text-red-500 hover:text-red-400">
+                        <i class="fas fa-times"></i>
+                    </button>
                 `;
-                
-                // Show use water button
-                useWaterBtn.classList.remove('hidden');
-                
-                // Show knowledge popup after delay
-                setTimeout(() => {
-                    knowledgePopup.classList.remove('hidden');
-                }, 1000);
-            } else {
-                // Failure animation
-                resultArea.innerHTML = `
-                    <div class="text-center">
-                        <div class="text-4xl mb-2">💥</div>
-                        <p class="text-red-400 font-bold">Fusão falhou!</p>
-                        <p class="text-sm">Combinação incorreta</p>
-                    </div>
-                `;
-                
-                // Clear fusion area after delay
-                setTimeout(() => {
-                    fusionArea.innerHTML = '<p class="text-gray-400">Arraste elementos aqui para combiná-los</p>';
-                    elementsInFusion = [];
-                }, 1500);
+                container.appendChild(itemElement);
+            });
+        }
+        
+        // Remove creative item
+        function removeCreativeItem(index) {
+            creativeItems.splice(index, 1);
+            updateCreativeItemsDisplay();
+        }
+        
+        // Generate room code
+        function generateRoomCode() {
+            if (creativeItems.length === 0) {
+                alert('Adicione pelo menos um item antes de gerar o código!');
+                return;
             }
-        });
+            
+            const code = Math.floor(1000 + Math.random() * 9000);
+            document.getElementById('room-code').textContent = code;
+            document.getElementById('room-code-container').classList.remove('hidden');
+        }
         
-        // Use water to solve the puzzle
-        useWaterBtn.addEventListener('click', function() {
-            alert('Parabéns! Você apagou o incêndio criando água. Fase completa!');
-            // Here would be logic to proceed to next phase
-        });
+        // Start creative game
+        function startCreativeGame() {
+            if (creativeItems.length === 0) {
+                alert('Adicione pelo menos um item antes de iniciar!');
+                return;
+            }
+            
+            const gameType = document.getElementById('creative-type').value;
+            timeLeft = parseInt(document.getElementById('creative-time').value) || 30;
+            document.getElementById('timer').textContent = timeLeft;
+            
+            // Generate challenges based on type
+            challenges = [];
+            if (gameType === 'syllables') {
+                challenges = [...creativeItems];
+            } else if (gameType === 'words') {
+                // For words mode, we'll ask to type the words
+                challenges = creativeItems.map(item => {
+                    return { text: `Digite a palavra: _`, missing: item };
+                });
+            } else if (gameType === 'sentences') {
+                // For sentences mode, we'll create simple fill-in-the-blank sentences
+                challenges = creativeItems.map(item => {
+                    return { text: `Esta é uma frase com a palavra _`, missing: item };
+                });
+            }
+            
+            shuffleArray(challenges);
+            
+            // Hide creative controls
+            document.getElementById('creative-controls').classList.add('hidden');
+            
+            // Show typing input
+            document.getElementById('typing-input').classList.remove('hidden');
+            document.getElementById('submit-btn').classList.remove('hidden');
+            
+            // Start timer and game
+            startTimer();
+            gameActive = true;
+            
+            // Show first challenge
+            showNextChallenge();
+        }
         
-        // Close knowledge popup
-        document.getElementById('close-popup').addEventListener('click', function() {
-            knowledgePopup.classList.add('hidden');
-        });
+        // Show next challenge
+        function showNextChallenge() {
+            if (!gameActive) return;
+            
+            if (currentMode === 'syllables' && currentChallengeIndex < challenges.length) {
+                document.getElementById('game-text').textContent = challenges[currentChallengeIndex];
+                document.getElementById('typing-input').focus();
+            } 
+            else if (currentMode === 'sentences' && currentChallengeIndex < challenges.length) {
+                const challenge = challenges[currentChallengeIndex];
+                document.getElementById('game-text').innerHTML = challenge.text.replace('_', '<span class="text-cyan-300">_____</span>');
+                document.getElementById('typing-input').focus();
+                
+                // Update progress
+                document.getElementById('progress-text').textContent = `${currentChallengeIndex + 1}/${challenges.length}`;
+                document.getElementById('progress-bar').style.width = `${(currentChallengeIndex + 1) / challenges.length * 100}%`;
+            }
+            else if (currentMode === 'interpretation' && currentChallengeIndex < challenges.length) {
+                const challenge = challenges[currentChallengeIndex];
+                document.getElementById('game-text').textContent = challenge.question;
+                
+                // Show options
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+                optionsContainer.classList.remove('hidden');
+                
+                challenge.options.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'pixel-btn bg-gray-700 hover:bg-gray-600 text-white py-3 px-4 rounded-none pixel-border w-full text-left';
+                    button.textContent = option;
+                    button.onclick = () => checkInterpretationAnswer(index);
+                    optionsContainer.appendChild(button);
+                });
+                
+                // Hide typing input for this mode
+                document.getElementById('typing-input').classList.add('hidden');
+                document.getElementById('submit-btn').classList.add('hidden');
+            }
+            else if (currentMode === 'logic' && currentChallengeIndex < challenges.length) {
+                const challenge = challenges[currentChallengeIndex];
+                
+                // For logic mode, we'll show the parts and ask to type the correct order
+                document.getElementById('game-text').textContent = `Ordene: ${challenge.parts.join(', ')}`;
+                document.getElementById('typing-input').placeholder = "Digite a ordem correta (ex: 1,2,3,4)";
+                document.getElementById('typing-input').focus();
+            }
+            else if (currentMode === 'creative') {
+                // Handle creative mode challenges
+                const gameType = document.getElementById('creative-type').value;
+                
+                if (gameType === 'syllables' && currentChallengeIndex < challenges.length) {
+                    document.getElementById('game-text').textContent = challenges[currentChallengeIndex];
+                }
+                else if ((gameType === 'words' || gameType === 'sentences') && currentChallengeIndex < challenges.length) {
+                    const challenge = challenges[currentChallengeIndex];
+                    document.getElementById('game-text').innerHTML = challenge.text.replace('_', '<span class="text-cyan-300">_____</span>');
+                }
+                
+                document.getElementById('typing-input').focus();
+            }
+            else {
+                // No more challenges, end game
+                endGame();
+            }
+        }
         
-        document.getElementById('continue-btn').addEventListener('click', function() {
-            knowledgePopup.classList.add('hidden');
-        });
+        // Check answer
+        function checkAnswer() {
+            if (!gameActive) return;
+            
+            const input = document.getElementById('typing-input');
+            const userAnswer = input.value.trim().toLowerCase();
+            input.value = '';
+            
+            if (currentMode === 'syllables') {
+                const correctAnswer = challenges[currentChallengeIndex].toLowerCase();
+                if (userAnswer === correctAnswer) {
+                    // Correct answer
+                    addScore(10);
+                    document.getElementById('game-text').classList.add('correct');
+                    createParticles(document.getElementById('game-text'));
+                } else {
+                    // Wrong answer
+                    document.getElementById('game-text').classList.add('wrong');
+                }
+                
+                // Remove animation classes after animation ends
+                setTimeout(() => {
+                    document.getElementById('game-text').classList.remove('correct', 'wrong');
+                }, 500);
+                
+                currentChallengeIndex++;
+                showNextChallenge();
+            }
+            else if (currentMode === 'sentences' || (currentMode === 'creative' && 
+                   (document.getElementById('creative-type').value === 'words' || 
+                    document.getElementById('creative-type').value === 'sentences'))) {
+                const challenge = challenges[currentChallengeIndex];
+                const correctAnswer = challenge.missing.toLowerCase();
+                
+                if (userAnswer === correctAnswer) {
+                    // Correct answer
+                    addScore(5);
+                    
+                    // Bonus for completing the sentence
+                    if (currentMode === 'sentences') {
+                        addScore(10);
+                    }
+                    
+                    document.getElementById('game-text').classList.add('correct');
+                    createParticles(document.getElementById('game-text'));
+                } else {
+                    // Wrong answer
+                    document.getElementById('game-text').classList.add('wrong');
+                }
+                
+                // Remove animation classes after animation ends
+                setTimeout(() => {
+                    document.getElementById('game-text').classList.remove('correct', 'wrong');
+                }, 500);
+                
+                currentChallengeIndex++;
+                showNextChallenge();
+            }
+            else if (currentMode === 'logic') {
+                const challenge = challenges[currentChallengeIndex];
+                const userOrder = userAnswer.split(',').map(num => parseInt(num.trim()) - 1);
+                
+                // Check if the order matches the correct order
+                let isCorrect = true;
+                for (let i = 0; i < userOrder.length; i++) {
+                    if (userOrder[i] !== challenge.correctOrder[i]) {
+                        isCorrect = false;
+                        break;
+                    }
+                }
+                
+                if (isCorrect && userOrder.length === challenge.correctOrder.length) {
+                    // Correct answer
+                    addScore(2 * challenge.parts.length);
+                    document.getElementById('game-text').classList.add('correct');
+                    createParticles(document.getElementById('game-text'));
+                } else {
+                    // Wrong answer
+                    document.getElementById('game-text').classList.add('wrong');
+                }
+                
+                // Remove animation classes after animation ends
+                setTimeout(() => {
+                    document.getElementById('game-text').classList.remove('correct', 'wrong');
+                }, 500);
+                
+                currentChallengeIndex++;
+                showNextChallenge();
+            }
+        }
+        
+        // Check interpretation answer
+        function checkInterpretationAnswer(selectedIndex) {
+            if (!gameActive) return;
+            
+            const challenge = challenges[currentChallengeIndex];
+            const options = document.querySelectorAll('#options-container button');
+            
+            if (selectedIndex === challenge.correct) {
+                // Correct answer
+                addScore(10);
+                options[selectedIndex].classList.add('correct');
+                createParticles(options[selectedIndex]);
+            } else {
+                // Wrong answer
+                options[selectedIndex].classList.add('wrong');
+                options[challenge.correct].classList.add('correct');
+            }
+            
+            // After delay, move to next challenge
+            setTimeout(() => {
+                options.forEach(option => {
+                    option.classList.remove('correct', 'wrong');
+                });
+                
+                currentChallengeIndex++;
+                
+                // Show typing input again for next challenge
+                document.getElementById('typing-input').classList.remove('hidden');
+                document.getElementById('submit-btn').classList.remove('hidden');
+                
+                showNextChallenge();
+            }, 1000);
+        }
+        
+        // Add score
+        function addScore(points) {
+            score += points;
+            document.getElementById('score').textContent = score;
+        }
+        
+        // Start timer
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+        
+        // End game
+        function endGame() {
+            clearInterval(timerInterval);
+            gameActive = false;
+            
+            // Show game over message
+            document.getElementById('game-text').textContent = `Fim de jogo! Pontuação: ${score}`;
+            document.getElementById('typing-input').classList.add('hidden');
+            document.getElementById('submit-btn').classList.add('hidden');
+            
+            // Add to rankings (in a real app, this would be saved to a database)
+            rankings.global.unshift({
+                player: "Jogador",
+                score: score,
+                words: Math.floor(score / 5), // Approximate word count
+                time: document.getElementById('timer').textContent + 's'
+            });
+            
+            // Keep only top 5 in global rankings
+            if (rankings.global.length > 5) {
+                rankings.global.pop();
+            }
+            
+            // Also add to mode-specific rankings
+            if (currentMode && currentMode !== 'creative') {
+                rankings[currentMode].unshift({
+                    player: "Jogador",
+                    score: score,
+                    words: Math.floor(score / 5),
+                    time: document.getElementById('timer').textContent + 's'
+                });
+                
+                // Keep only top 3 in mode rankings
+                if (rankings[currentMode].length > 3) {
+                    rankings[currentMode].pop();
+                }
+            }
+        }
+        
+        // Stop game (without showing end screen)
+        function stopGame() {
+            clearInterval(timerInterval);
+            gameActive = false;
+        }
+        
+        // Enter spectator mode
+        function enterSpectatorMode() {
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('mode-menu').classList.add('hidden');
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('rankings-screen').classList.add('hidden');
+            document.getElementById('spectator-screen').classList.remove('hidden');
+            currentScreen = 'spectator';
+            
+            // Set spectator score
+            document.getElementById('spectator-score').textContent = score;
+            document.getElementById('spectator-timer').textContent = timeLeft;
+            
+            // Update active players
+            const activePlayersContainer = document.getElementById('active-players');
+            activePlayersContainer.innerHTML = '';
+            
+            activePlayers.forEach(player => {
+                const playerElement = document.createElement('div');
+                playerElement.className = 'flex justify-between items-center';
+                playerElement.innerHTML = `
+                    <span>${player.name}</span>
+                    <span>${player.score} pts</span>
+                `;
+                activePlayersContainer.appendChild(playerElement);
+            });
+            
+            // Update spectator ranking
+            const spectatorRankingContainer = document.getElementById('spectator-ranking');
+            spectatorRankingContainer.innerHTML = '';
+            
+            const sortedPlayers = [...activePlayers].sort((a, b) => b.score - a.score);
+            sortedPlayers.forEach((player, index) => {
+                const rankElement = document.createElement('div');
+                rankElement.className = 'flex justify-between items-center';
+                rankElement.innerHTML = `
+                    <span>${index + 1}º ${player.name}</span>
+                    <span>${player.score} pts</span>
+                `;
+                spectatorRankingContainer.appendChild(rankElement);
+            });
+        }
+        
+        // Send chat message
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            const chatMessages = document.getElementById('chat-messages');
+            const messageElement = document.createElement('div');
+            messageElement.className = 'mb-1';
+            messageElement.textContent = `Jogador: ${message}`;
+            chatMessages.appendChild(messageElement);
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            input.value = '';
+        }
+        
+        // Create particles effect
+        function createParticles(element) {
+            const rect = element.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            for (let i = 0; i < 10; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.width = `${Math.random() * 5 + 2}px`;
+                particle.style.height = particle.style.width;
+                particle.style.left = `${centerX}px`;
+                particle.style.top = `${centerY}px`;
+                
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 50 + 20;
+                const duration = Math.random() * 1000 + 500;
+                
+                document.body.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
+                    particle.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        particle.remove();
+                    }, duration);
+                }, 10);
+            }
+        }
+        
+        // Utility function to shuffle array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
     </script>
 </body>
 </html>
