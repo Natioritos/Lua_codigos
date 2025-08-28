@@ -403,12 +403,24 @@
         </footer>
     </div>
     
+    <!-- XP Container -->
+    <div id="xp-container" style="width: 100%; background: #222; border-radius: 8px; margin-bottom: 16px; height: 20px;">
+      <div id="xp-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #a78bfa, #facc15); border-radius: 8px;"></div>
+    </div>
+
+    <!-- Difficulty Buttons -->
+    <div class="flex gap-2 mb-4">
+      <button id="easy-btn" class="bg-green-700 px-4 py-2 rounded text-white">Fácil</button>
+      <button id="medium-btn" class="bg-yellow-600 px-4 py-2 rounded text-white" disabled>Médio</button>
+      <button id="hard-btn" class="bg-red-700 px-4 py-2 rounded text-white" disabled>Difícil</button>
+    </div>
+
     <script>
         // Game state
         const gameState = {
             difficulty: null,
             level: 1,
-            xp: 300, // XP acumulativo
+            xp: 0, // XP acumulativo
             maxLevels: 3, // Cada dificuldade tem 3 níveis
             timeLimit: 10,
             timer: null,
@@ -480,6 +492,10 @@
         const nextLevelBtn = document.getElementById('next-level-btn');
         const menuBtn = document.getElementById('menu-btn');
         const starsContainer = document.getElementById('stars-container');
+        const xpBar = document.getElementById('xp-bar');
+        const easyBtn = document.getElementById('easy-btn');
+        const mediumBtn = document.getElementById('medium-btn');
+        const hardBtn = document.getElementById('hard-btn');
         
         // Initialize stars background
         function createStars() {
@@ -1058,6 +1074,27 @@
                     option.classList.remove('opacity-50', 'cursor-not-allowed');
                 }
             });
+
+            // Atualiza a barra de XP
+            const xpPercent = (gameState.xp % 100) / 100 * 100;
+            xpBar.style.width = `${xpPercent}%`;
+
+            // Habilita ou desabilita os botões de dificuldade com base no XP
+            if (gameState.xp >= 150) {
+                mediumBtn.disabled = false;
+                mediumBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                mediumBtn.disabled = true;
+                mediumBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+
+            if (gameState.xp >= 250) {
+                hardBtn.disabled = false;
+                hardBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                hardBtn.disabled = true;
+                hardBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
         }
         
         // Initialize game
@@ -1068,6 +1105,9 @@
         
         // Start the game
         init();
+
+        
     </script>
+    <script type="module" src="core/reflex.js"></script>
 </body>
 </html>
