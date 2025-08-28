@@ -1,1113 +1,461 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reflex Órion</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Press Start 2P', cursive;
-            background-color: #0f0e1e;
-            color: white;
-            overflow-x: hidden;
-        }
-        
-        .game-container {
-            background: radial-gradient(circle at center, #1a103d 0%, #0a0814 100%);
-            border: 4px solid #4e3d8f;
-            box-shadow: 0 0 20px rgba(113, 58, 255, 0.5);
-        }
-        
-        .star {
-            position: absolute;
-            background-color: white;
-            border-radius: 50%;
-            animation: twinkle 2s infinite alternate;
-        }
-        
-        @keyframes twinkle {
-            0% { opacity: 0.3; }
-            100% { opacity: 1; }
-        }
-        
-        .pixel-art {
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            image-rendering: crisp-edges;
-        }
-        
-        .explosion {
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="yellow"/><circle cx="30" cy="30" r="10" fill="orange"/><circle cx="70" cy="30" r="8" fill="orange"/><circle cx="30" cy="70" r="12" fill="orange"/><circle cx="70" cy="70" r="9" fill="orange"/></svg>') no-repeat center center;
-            background-size: contain;
-            animation: explode 0.8s forwards;
-            z-index: 100;
-            pointer-events: none;
-        }
-        
-        @keyframes explode {
-            0% { transform: scale(0); opacity: 1; }
-            100% { transform: scale(3); opacity: 0; }
-        }
-        
-        .shake {
-            animation: shake 0.5s;
-        }
-        
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            50% { transform: translateX(10px); }
-            75% { transform: translateX(-10px); }
-            100% { transform: translateX(0); }
-        }
-        
-        .glitch {
-            position: relative;
-        }
-        
-        .glitch::after {
-            content: attr(data-text);
-            position: absolute;
-            left: 2px;
-            text-shadow: -1px 0 red;
-            top: 0;
-            color: white;
-            background: #0f0e1e;
-            overflow: hidden;
-            clip: rect(0, 900px, 0, 0);
-            animation: noise-anim 2s infinite linear alternate-reverse;
-        }
-        
-        .glitch::before {
-            content: attr(data-text);
-            position: absolute;
-            left: -2px;
-            text-shadow: 1px 0 blue;
-            top: 0;
-            color: white;
-            background: #0f0e1e;
-            overflow: hidden;
-            clip: rect(0, 900px, 0, 0);
-            animation: noise-anim-2 3s infinite linear alternate-reverse;
-        }
-        
-        @keyframes noise-anim {
-            0% { clip: rect(61px, 9999px, 52px, 0); }
-            5% { clip: rect(33px, 9999px, 144px, 0); }
-            10% { clip: rect(121px, 9999px, 115px, 0); }
-            15% { clip: rect(144px, 9999px, 162px, 0); }
-            20% { clip: rect(109px, 9999px, 128px, 0); }
-            25% { clip: rect(95px, 9999px, 53px, 0); }
-            30% { clip: rect(138px, 9999px, 108px, 0); }
-            35% { clip: rect(27px, 9999px, 97px, 0); }
-            40% { clip: rect(100px, 9999px, 129px, 0); }
-            45% { clip: rect(69px, 9999px, 85px, 0); }
-            50% { clip: rect(118px, 9999px, 110px, 0); }
-            55% { clip: rect(104px, 9999px, 149px, 0); }
-            60% { clip: rect(141px, 9999px, 74px, 0); }
-            65% { clip: rect(20px, 9999px, 28px, 0); }
-            70% { clip: rect(133px, 9999px, 55px, 0); }
-            75% { clip: rect(140px, 9999px, 89px, 0); }
-            80% { clip: rect(31px, 9999px, 160px, 0); }
-            85% { clip: rect(65px, 9999px, 62px, 0); }
-            90% { clip: rect(68px, 9999px, 37px, 0); }
-            95% { clip: rect(32px, 9999px, 36px, 0); }
-            100% { clip: rect(143px, 9999px, 134px, 0); }
-        }
-        
-        @keyframes noise-anim-2 {
-            0% { clip: rect(65px, 9999px, 119px, 0); }
-            5% { clip: rect(104px, 9999px, 34px, 0); }
-            10% { clip: rect(47px, 9999px, 128px, 0); }
-            15% { clip: rect(148px, 9999px, 84px, 0); }
-            20% { clip: rect(123px, 9999px, 145px, 0); }
-            25% { clip: rect(25px, 9999px, 35px, 0); }
-            30% { clip: rect(129px, 9999px, 54px, 0); }
-            35% { clip: rect(141px, 9999px, 74px, 0); }
-            40% { clip: rect(25px, 9999px, 143px, 0); }
-            45% { clip: rect(38px, 9999px, 119px, 0); }
-            50% { clip: rect(138px, 9999px, 145px, 0); }
-            55% { clip: rect(97px, 9999px, 25px, 0); }
-            60% { clip: rect(63px, 9999px, 13px, 0); }
-            65% { clip: rect(34px, 9999px, 51px, 0); }
-            70% { clip: rect(147px, 9999px, 125px, 0); }
-            75% { clip: rect(102px, 9999px, 80px, 0); }
-            80% { clip: rect(90px, 9999px, 91px, 0); }
-            85% { clip: rect(131px, 9999px, 64px, 0); }
-            90% { clip: rect(108px, 9999px, 120px, 0); }
-            95% { clip: rect(140px, 9999px, 102px, 0); }
-            100% { clip: rect(25px, 9999px, 62px, 0); }
-        }
-        
-        .progress-bar {
-            height: 20px;
-            background: linear-gradient(to right, #3b0764, #7e22ce);
-            border: 2px solid #4e3d8f;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .progress-bar::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
-            animation: progress-shine 2s infinite;
-        }
-        
-        @keyframes progress-shine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        
-        .timer {
-            position: relative;
-            width: 60px;
-            height: 60px;
-        }
-        
-        .timer-circle {
-            fill: none;
-            stroke: #7e22ce;
-            stroke-width: 6;
-            stroke-linecap: round;
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-        }
-        
-        .timer-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 1rem;
-        }
-        
-        .option {
-            transition: all 0.3s ease;
-            border: 3px solid transparent;
-        }
-        
-        .option:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-        }
-        
-        .option.correct {
-            animation: correct-pulse 0.5s;
-        }
-        
-        @keyframes correct-pulse {
-            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
-        }
-        
-        .option.wrong {
-            animation: wrong-pulse 0.5s;
-        }
-        
-        @keyframes wrong-pulse {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
-
-        /* Botão de estrela */
-        #star-button {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 50;
-        }
-
-        /* Estrela em pixel-art */
-        .pixel-star {
-            position: relative;
-            width: 20px;
-            height: 20px;
-            background-color: yellow;
-            clip-path: polygon(
-                50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 
-                50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%
-            );
-            box-shadow: 0 0 5px rgba(255, 255, 0, 0.8), 0 0 10px rgba(255, 255, 0, 0.5);
-            animation: star-glow 1.5s infinite alternate;
-        }
-
-        /* Animação de brilho */
-        @keyframes star-glow {
-            0% {
-                box-shadow: 0 0 5px rgba(255, 255, 0, 0.8), 0 0 10px rgba(255, 255, 0, 0.5);
-            }
-            100% {
-                box-shadow: 0 0 10px rgba(255, 255, 0, 1), 0 0 20px rgba(255, 255, 0, 0.8);
-            }
-        }
-
-        /* Botão flutuante */
-        #lua-button {
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 50;
-            animation: float 3s infinite ease-in-out;
-        }
-
-        /* Estilo da logo */
-        .lua-logo {
-            width: 100%;
-            height: auto;
-            border-radius: 50%;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.5);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        /* Efeito de hover */
-        #lua-button:hover .lua-logo {
-            transform: scale(1.1);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 1), 0 0 30px rgba(255, 255, 255, 0.8);
-        }
-
-        /* Animação de flutuação */
-        @keyframes float {
-            0% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-            100% {
-                transform: translateY(0);
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reflex Órion – Pixel Retro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --c-bg:#0f0e1e;--c-panel1:#1a103d;--c-panel2:#0a0814;--c-border:#4e3d8f;
+    }
+    html,body{height:100%}
+    body{font-family:"Press Start 2P",cursive;background:var(--c-bg);color:#fff;overflow-x:hidden}
+    .game-container{background:radial-gradient(circle at center,var(--c-panel1) 0%,var(--c-panel2) 100%);border:4px solid var(--c-border);box-shadow:0 0 20px rgba(113,58,255,.5)}
+    /* starfield */
+    .star{position:absolute;background:#fff;border-radius:50%;animation:twinkle 2s infinite alternate}
+    @keyframes twinkle{0%{opacity:.3}100%{opacity:1}}
+    /* pixel crisp */
+    .pixel-art{image-rendering:pixelated;image-rendering:-moz-crisp-edges;image-rendering:crisp-edges}
+    /* explosion */
+    .explosion{position:absolute;width:100px;height:100px;background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="yellow"/><circle cx="30" cy="30" r="10" fill="orange"/><circle cx="70" cy="30" r="8" fill="orange"/><circle cx="30" cy="70" r="12" fill="orange"/><circle cx="70" cy="70" r="9" fill="orange"/></svg>') no-repeat center/contain;animation:explode .8s forwards;z-index:100;pointer-events:none}
+    @keyframes explode{0%{transform:scale(0);opacity:1}100%{transform:scale(3);opacity:0}}
+    .shake{animation:shake .5s}
+    @keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-10px)}50%{transform:translateX(10px)}75%{transform:translateX(-10px)}100%{transform:translateX(0)}}
+    /* glitch title */
+    .glitch{position:relative}
+    .glitch::after,.glitch::before{content:attr(data-text);position:absolute;top:0;background:var(--c-bg);color:#fff;overflow:hidden;clip:rect(0,900px,0,0)}
+    .glitch::after{left:2px;text-shadow:-1px 0 red;animation:noise-anim 2s infinite linear alternate-reverse}
+    .glitch::before{left:-2px;text-shadow:1px 0 blue;animation:noise-anim-2 3s infinite linear alternate-reverse}
+    @keyframes noise-anim{0%{clip:rect(61px,9999px,52px,0)}5%{clip:rect(33px,9999px,144px,0)}10%{clip:rect(121px,9999px,115px,0)}15%{clip:rect(144px,9999px,162px,0)}20%{clip:rect(109px,9999px,128px,0)}25%{clip:rect(95px,9999px,53px,0)}30%{clip:rect(138px,9999px,108px,0)}35%{clip:rect(27px,9999px,97px,0)}40%{clip:rect(100px,9999px,129px,0)}45%{clip:rect(69px,9999px,85px,0)}50%{clip:rect(118px,9999px,110px,0)}55%{clip:rect(104px,9999px,149px,0)}60%{clip:rect(141px,9999px,74px,0)}65%{clip:rect(20px,9999px,28px,0)}70%{clip:rect(133px,9999px,55px,0)}75%{clip:rect(140px,9999px,89px,0)}80%{clip:rect(31px,9999px,160px,0)}85%{clip:rect(65px,9999px,62px,0)}90%{clip:rect(68px,9999px,37px,0)}95%{clip:rect(32px,9999px,36px,0)}100%{clip:rect(143px,9999px,134px,0)}}
+    @keyframes noise-anim-2{0%{clip:rect(65px,9999px,119px,0)}5%{clip:rect(104px,9999px,34px,0)}10%{clip:rect(47px,9999px,128px,0)}15%{clip:rect(148px,9999px,84px,0)}20%{clip:rect(123px,9999px,145px,0)}25%{clip:rect(25px,9999px,35px,0)}30%{clip:rect(129px,9999px,54px,0)}35%{clip:rect(141px,9999px,74px,0)}40%{clip:rect(25px,9999px,143px,0)}45%{clip:rect(38px,9999px,119px,0)}50%{clip:rect(138px,9999px,145px,0)}55%{clip:rect(97px,9999px,25px,0)}60%{clip:rect(63px,9999px,13px,0)}65%{clip:rect(34px,9999px,51px,0)}70%{clip:rect(147px,9999px,125px,0)}75%{clip:rect(102px,9999px,80px,0)}80%{clip:rect(90px,9999px,91px,0)}85%{clip:rect(131px,9999px,64px,0)}90%{clip:rect(108px,9999px,120px,0)}95%{clip:rect(140px,9999px,102px,0)}100%{clip:rect(25px,9999px,62px,0)}}
+    /* progress */
+    .progress-bar{height:20px;background:linear-gradient(to right,#3b0764,#7e22ce);border:2px solid var(--c-border);position:relative;overflow:hidden}
+    .progress-bar::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.2) 50%,rgba(255,255,255,0) 100%);animation:progress-shine 2s infinite}
+    @keyframes progress-shine{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+    /* timer ring */
+    .timer{position:relative;width:64px;height:64px}
+    .timer-circle{fill:none;stroke:#7e22ce;stroke-width:6;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%}
+    .timer-text{position:absolute;inset:0;display:grid;place-items:center;font-size:.9rem}
+    /* options */
+    .option{transition:.2s;border:3px solid transparent}
+    .option:hover{transform:scale(1.05);box-shadow:0 0 15px rgba(255,255,255,.5)}
+    .option.correct{animation:correct-pulse .5s}
+    @keyframes correct-pulse{0%{box-shadow:0 0 0 0 rgba(74,222,128,.7)}70%{box-shadow:0 0 0 10px rgba(74,222,128,0)}100%{box-shadow:0 0 0 0 rgba(74,222,128,0)}}
+    .option.wrong{animation:wrong-pulse .5s}
+    @keyframes wrong-pulse{0%{box-shadow:0 0 0 0 rgba(239,68,68,.7)}70%{box-shadow:0 0 0 10px rgba(239,68,68,0)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}
+    /* floating buttons */
+    #lua-button{width:60px;height:60px;display:flex;align-items:center;justify-content:center;z-index:50;animation:float 3s infinite ease-in-out}
+    .lua-logo{width:100%;height:auto;border-radius:50%;box-shadow:0 0 10px rgba(255,255,255,.8),0 0 20px rgba(255,255,255,.5);transition:transform .3s,box-shadow .3s}
+    #lua-button:hover .lua-logo{transform:scale(1.1);box-shadow:0 0 15px rgba(255,255,255,1),0 0 30px rgba(255,255,255,.8)}
+    @keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-10px)}100%{transform:translateY(0)}}
+    #star-button{width:44px;height:44px;display:flex;align-items:center;justify-content:center;z-index:50;cursor:pointer}
+    .pixel-star{position:relative;width:20px;height:20px;background:yellow;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);box-shadow:0 0 5px rgba(255,255,0,.8),0 0 10px rgba(255,255,0,.5);animation:star-glow 1.5s infinite alternate}
+    @keyframes star-glow{0%{box-shadow:0 0 5px rgba(255,255,0,.8),0 0 10px rgba(255,255,0,.5)}100%{box-shadow:0 0 10px rgba(255,255,0,1),0 0 20px rgba(255,255,0,.8)}}
+    /* CRT scanline toggle */
+    .crt{position:relative}
+    .crt::after{content:"";pointer-events:none;position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.02) 0 2px,transparent 2px 4px)}
+    /* accessibility outline */
+    button:focus-visible{outline:3px dashed #eab308;outline-offset:2px}
+  </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4">
-    <!-- Star background -->
-    <div id="stars-container" class="fixed inset-0 overflow-hidden z-0"></div>
-    
-    <a href="LUA.html" id="lua-button" class="absolute top-4 left-4">
-        <img src="path/to/logo.png" alt="Logo LUA" class="lua-logo">
-    </a>
+  <!-- Stars BG -->
+  <div id="stars-container" class="fixed inset-0 overflow-hidden z-0"></div>
 
-    <div class="game-container relative z-10 w-full max-w-4xl rounded-lg p-6 mb-8">
-        <!-- Game Header -->
-        <header class="flex flex-col items-center mb-8">
-            <h1 class="text-3xl md:text-4xl text-center mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
-                REFLEX <span class="text-yellow-300">ÓRION</span>
-            </h1>
-            
-            <div class="flex items-center space-x-4 mb-4">
-                <div class="bg-purple-900 px-4 py-2 rounded-lg flex items-center">
-                    <span class="text-yellow-300 mr-2">XP:</span>
-                    <span id="xp-counter" class="text-white">0</span>
-                </div>
-                
-                <div class="bg-purple-900 px-4 py-2 rounded-lg flex items-center">
-                    <span class="text-yellow-300 mr-2">Fase:</span>
-                    <span id="level-counter" class="text-white">1/10</span>
-                </div>
-            </div>
-            
-            <div class="w-full max-w-md mb-4">
-                <div class="progress-bar rounded-full" id="progress-bar">
-                    <div class="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full" style="width: 0%"></div>
-                </div>
-            </div>
-        </header>
-        
-        <!-- Main Game Area -->
-        <main class="mb-8">
-            <!-- Difficulty Selection Screen -->
-            <div id="difficulty-screen" class="text-center">
-                <h2 class="text-2xl mb-6 text-purple-300">ESCOLHA SUA DIFICULDADE</h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="difficulty-option bg-gradient-to-br from-blue-900 to-purple-900 p-6 rounded-lg cursor-pointer hover:from-blue-800 hover:to-purple-800 transition-all" data-difficulty="easy">
-                        <h3 class="text-xl text-green-400 mb-2">NEBULOSA</h3>
-                        <p class="text-sm text-gray-300 mb-3">Nível Fácil</p>
-                        <p class="text-xs text-gray-400">Sem requisitos</p>
-                    </div>
+  <!-- Floating moon/logo (inline SVG to evitar assets externos) -->
+  <a href="#" id="lua-button" class="absolute top-4 left-4" title="Sobre / LUA">
+    <svg class="lua-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs><radialGradient id="g" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#9dc1ff"/></radialGradient></defs>
+      <circle cx="50" cy="50" r="48" fill="url(#g)"/>
+      <circle cx="60" cy="40" r="24" fill="#0f0e1e"/>
+    </svg>
+  </a>
 
-                    <div class="difficulty-option bg-gradient-to-br from-purple-900 to-indigo-900 p-6 rounded-lg opacity-50 cursor-not-allowed" data-difficulty="medium">
-                        <h3 class="text-xl text-yellow-400 mb-2">🔒 CONSTELAÇÃO</h3>
-                        <p class="text-sm text-gray-300 mb-3">Nível Médio</p>
-                        <p class="text-xs text-gray-400">Requer 150 XP no nível fácil</p>
-                    </div>
+  <!-- Star (hint) button -->
+  <button id="star-button" class="absolute top-4 right-4" title="Dica (1 por fase)">
+    <div class="pixel-star"></div>
+  </button>
 
-                    <div class="difficulty-option bg-gradient-to-br from-indigo-900 to-pink-900 p-6 rounded-lg opacity-50 cursor-not-allowed" data-difficulty="hard">
-                        <h3 class="text-xl text-red-400 mb-2">🔒 ÓRION</h3>
-                        <p class="text-sm text-gray-300 mb-3">Nível Difícil</p>
-                        <p class="text-xs text-gray-400">Requer 250 XP no nível médio</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Game Screen -->
-            <div id="game-screen" class="hidden">
-                <div class="flex justify-between items-center mb-6">
-                    <div class="timer">
-                        <svg class="w-full h-full" viewBox="0 0 60 60">
-                            <circle class="timer-circle" cx="30" cy="30" r="25" stroke-dasharray="157" stroke-dashoffset="0"></circle>
-                        </svg>
-                        <div class="timer-text" id="timer-text">10</div>
-                    </div>
-                    
-                    <div class="text-xl" id="stage-title">NEBULOSA</div>
-                </div>
-                
-                <div class="game-content bg-black bg-opacity-30 rounded-lg p-8 mb-6 min-h-48 flex items-center justify-center border-2 border-purple-800">
-                    <div id="challenge-display" class="text-center">
-                        <!-- Challenge content will be inserted here -->
-                    </div>
-                </div>
-                
-                <div id="options-container" class="grid grid-cols-2 gap-4">
-                    <!-- Options will be inserted here -->
-                </div>
-            </div>
-            
-            <!-- Results Screen -->
-            <div id="results-screen" class="hidden text-center">
-                <h2 id="result-title" class="text-3xl mb-6"></h2>
-                <p id="result-message" class="mb-6"></p>
-                <div class="flex justify-center space-x-4">
-                    <button id="next-level-btn" class="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-lg transition-colors">
-                        PRÓXIMO NÍVEL
-                    </button>
-                    <button id="menu-btn" class="bg-gray-600 hover:bg-gray-700 px-6 py-2 rounded-lg transition-colors">
-                        MENU
-                    </button>
-                </div>
-            </div>
-        </main>
-        
-        <!-- Footer -->
-        <footer class="text-center text-xs text-gray-500">
-            <p>Treine seus reflexos e percepção visual em desafios cósmicos!</p>
-        </footer>
-    </div>
-    
-    <!-- XP Container -->
-    <div id="xp-container" style="width: 100%; background: #222; border-radius: 8px; margin-bottom: 16px; height: 20px;">
-      <div id="xp-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #a78bfa, #facc15); border-radius: 8px;"></div>
-    </div>
+  <div id="root" class="game-container relative z-10 w-full max-w-4xl rounded-lg p-6 mb-8 crt">
+    <!-- Header -->
+    <header class="flex flex-col items-center mb-8">
+      <h1 class="glitch text-3xl md:text-4xl text-center mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400" data-text="REFLEX ÓRION">REFLEX <span class="text-yellow-300">ÓRION</span></h1>
 
-    <!-- Difficulty Buttons -->
-    <div class="flex gap-2 mb-4">
-      <button id="easy-btn" class="bg-green-700 px-4 py-2 rounded text-white">Fácil</button>
-      <button id="medium-btn" class="bg-yellow-600 px-4 py-2 rounded text-white" disabled>Médio</button>
-      <button id="hard-btn" class="bg-red-700 px-4 py-2 rounded text-white" disabled>Difícil</button>
-    </div>
+      <div class="flex flex-wrap items-center justify-center gap-3 mb-4">
+        <div class="bg-purple-900 px-4 py-2 rounded-lg flex items-center"><span class="text-yellow-300 mr-2">XP:</span><span id="xp-counter">0</span></div>
+        <div class="bg-purple-900 px-4 py-2 rounded-lg flex items-center"><span class="text-yellow-300 mr-2">Fase:</span><span id="level-counter">1/10</span></div>
+        <div class="bg-purple-900 px-4 py-2 rounded-lg flex items-center gap-2">
+          <button id="pause-btn" class="text-xs bg-black/30 px-3 py-2 rounded">⏸️ Pausar</button>
+          <button id="mute-btn" class="text-xs bg-black/30 px-3 py-2 rounded">🔊 Som</button>
+        </div>
+      </div>
 
-    <script>
-        // Game state
-        const gameState = {
-            difficulty: null,
-            level: 1,
-            xp: 0, // XP acumulativo
-            maxLevels: 3, // Cada dificuldade tem 3 níveis
-            timeLimit: 10,
-            timer: null,
-            timeLeft: 10,
-            currentChallenge: null,
-            stageName: "NEBULOSA",
-            stageColor: "text-green-400"
-        };
-        
-        // Challenges by difficulty
-        const challenges = {
-            easy: [
-                // Nível 1: Normal
-                {
-                    type: "stroop",
-                    question: { text: "VERMELHO", color: "blue" },
-                    options: [
-                        { text: "VERMELHO", color: "red", correct: false },
-                        { text: "AZUL", color: "blue", correct: true },
-                        { text: "VERDE", color: "green", correct: false },
-                        { text: "AMARELO", color: "yellow", correct: false }
-                    ]
-                },
-                // Nível 2: Pequena variação
-                {
-                    type: "stroop",
-                    question: { text: "AZUL", color: "red" },
-                    options: [
-                        { text: "VERMELHO", color: "red", correct: true },
-                        { text: "AZUL", color: "blue", correct: false },
-                        { text: "ROXO", color: "purple", correct: false },
-                        { text: "VERDE", color: "green", correct: false }
-                    ]
-                },
-                // Nível 3: Variação mais difícil
-                {
-                    type: "stroop",
-                    question: { text: "VERDE", color: "yellow" },
-                    options: [
-                        { text: "AMARELO", color: "yellow", correct: true },
-                        { text: "VERDE", color: "green", correct: false },
-                        { text: "AZUL", color: "blue", correct: false },
-                        { text: "ROSA", color: "pink", correct: false }
-                    ]
-                }
-            ],
-            medium: [
-                // Adicione variações para o nível médio
-            ],
-            hard: [
-                // Adicione variações para o nível difícil
-            ]
-        };
-        
-        // DOM elements
-        const difficultyScreen = document.getElementById('difficulty-screen');
-        const gameScreen = document.getElementById('game-screen');
-        const resultsScreen = document.getElementById('results-screen');
-        const challengeDisplay = document.getElementById('challenge-display');
-        const optionsContainer = document.getElementById('options-container');
-        const xpCounter = document.getElementById('xp-counter');
-        const levelCounter = document.getElementById('level-counter');
-        const progressBar = document.querySelector('#progress-bar div');
-        const timerText = document.getElementById('timer-text');
-        const timerCircle = document.querySelector('.timer-circle');
-        const stageTitle = document.getElementById('stage-title');
-        const resultTitle = document.getElementById('result-title');
-        const resultMessage = document.getElementById('result-message');
-        const nextLevelBtn = document.getElementById('next-level-btn');
-        const menuBtn = document.getElementById('menu-btn');
-        const starsContainer = document.getElementById('stars-container');
-        const xpBar = document.getElementById('xp-bar');
-        const easyBtn = document.getElementById('easy-btn');
-        const mediumBtn = document.getElementById('medium-btn');
-        const hardBtn = document.getElementById('hard-btn');
-        
-        // Initialize stars background
-        function createStars() {
-            const starsCount = 100;
-            
-            for (let i = 0; i < starsCount; i++) {
-                const star = document.createElement('div');
-                star.classList.add('star');
-                
-                // Random position
-                const x = Math.random() * 100;
-                const y = Math.random() * 100;
-                
-                // Random size
-                const size = Math.random() * 3;
-                
-                // Random animation delay
-                const delay = Math.random() * 2;
-                
-                star.style.left = `${x}%`;
-                star.style.top = `${y}%`;
-                star.style.width = `${size}px`;
-                star.style.height = `${size}px`;
-                star.style.animationDelay = `${delay}s`;
-                
-                starsContainer.appendChild(star);
-            }
+      <div class="w-full max-w-md mb-4">
+        <div class="progress-bar rounded-full" id="progress-bar"><div class="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full" style="width:0%"></div></div>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="mb-8">
+      <!-- Difficulty screen -->
+      <div id="difficulty-screen" class="text-center">
+        <h2 class="text-2xl mb-6 text-purple-300">ESCOLHA SUA DIFICULDADE</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="difficulty-option bg-gradient-to-br from-blue-900 to-purple-900 p-6 rounded-lg cursor-pointer hover:from-blue-800 hover:to-purple-800 transition-all" data-difficulty="easy" tabindex="0" role="button" aria-label="Facil Nebulosa">
+            <h3 class="text-xl text-green-400 mb-2">NEBULOSA</h3>
+            <p class="text-sm text-gray-300 mb-3">Nível Fácil</p>
+            <p class="text-xs text-gray-400">Sem requisitos</p>
+          </div>
+          <div class="difficulty-option bg-gradient-to-br from-purple-900 to-indigo-900 p-6 rounded-lg opacity-50 cursor-not-allowed" data-difficulty="medium" aria-disabled="true">
+            <h3 class="text-xl text-yellow-400 mb-2">🔒 CONSTELAÇÃO</h3>
+            <p class="text-sm text-gray-300 mb-3">Nível Médio</p>
+            <p class="text-xs text-gray-400">Requer 150 XP no fácil</p>
+          </div>
+          <div class="difficulty-option bg-gradient-to-br from-indigo-900 to-pink-900 p-6 rounded-lg opacity-50 cursor-not-allowed" data-difficulty="hard" aria-disabled="true">
+            <h3 class="text-xl text-red-400 mb-2">🔒 ÓRION</h3>
+            <p class="text-sm text-gray-300 mb-3">Nível Difícil</p>
+            <p class="text-xs text-gray-400">Requer 250 XP no médio</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Game screen -->
+      <div id="game-screen" class="hidden">
+        <div class="flex justify-between items-center mb-6">
+          <div class="timer" aria-live="polite" aria-atomic="true">
+            <svg class="w-full h-full" viewBox="0 0 60 60">
+              <circle class="timer-circle" cx="30" cy="30" r="25" stroke-dasharray="157" stroke-dashoffset="0"></circle>
+            </svg>
+            <div class="timer-text" id="timer-text">10</div>
+          </div>
+          <div class="text-xl" id="stage-title">NEBULOSA</div>
+        </div>
+
+        <div class="game-content bg-black/30 rounded-lg p-6 mb-6 min-h-48 flex items-center justify-center border-2 border-purple-800">
+          <div id="challenge-display" class="text-center w-full"></div>
+        </div>
+
+        <div id="options-container" class="grid grid-cols-2 md:grid-cols-4 gap-4" aria-label="Opções"></div>
+        <p class="text-xs text-gray-400 mt-4 text-center">Dica: use 1, 2, 3, 4 do teclado para escolher rapidamente.</p>
+      </div>
+
+      <!-- Results screen -->
+      <div id="results-screen" class="hidden text-center">
+        <h2 id="result-title" class="text-3xl mb-6"></h2>
+        <p id="result-message" class="mb-6"></p>
+        <div class="flex justify-center gap-3">
+          <button id="next-level-btn" class="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-lg transition-colors">PRÓXIMO NÍVEL</button>
+          <button id="menu-btn" class="bg-gray-600 hover:bg-gray-700 px-6 py-2 rounded-lg transition-colors">MENU</button>
+        </div>
+      </div>
+    </main>
+
+    <footer class="text-center text-xs text-gray-500">
+      <p>Treine reflexos e percepção em desafios cósmicos retrô.</p>
+    </footer>
+  </div>
+
+  <script>
+    // ======== Estado do jogo ========
+    const savedXP = Number(localStorage.getItem("reflex_orion_xp")) || 0;
+    const gameState = {
+      difficulty:null, level:1, xp:savedXP, maxLevels:3,
+      timeLimit:10, timer:null, timeLeft:10, currentChallenge:null,
+      stageName:"NEBULOSA", stageColor:"text-green-400", paused:false, muted:false,
+      hintUsed:false
+    };
+
+    // ======== Desafios por dificuldade ========
+    // Tipos: 'stroop', 'memory', 'illusion', 'sequence'
+    const challenges = {
+      easy:[
+        { type:"stroop", question:{ text:"VERMELHO", color:"blue" }, options:[
+            { text:"VERMELHO", color:"red", correct:false },
+            { text:"AZUL", color:"blue", correct:true },
+            { text:"VERDE", color:"green", correct:false },
+            { text:"AMARELO", color:"yellow", correct:false },
+        ]},
+        { type:"memory", question:{ shapes:[
+            { type:"square", color:"red", duration:600 },
+            { type:"circle", color:"green", duration:600 },
+            { type:"square", color:"blue", duration:600 },
+        ]}, options:[
+            { type:"square", color:"red" },
+            { type:"circle", color:"green" },
+            { type:"square", color:"blue" },
+            { type:"circle", color:"yellow" },
+        ]},
+        { type:"sequence", question:{ description:"Observe a sequência de cores e identifique a ordem correta.", sequence:[
+            { color:"#22c55e", duration:450 },
+            { color:"#eab308", duration:450 },
+            { color:"#3b82f6", duration:450 }
+        ]}, options:[
+            { sequence:["#22c55e","#eab308","#3b82f6"], correct:true },
+            { sequence:["#eab308","#22c55e","#3b82f6"], correct:false },
+            { sequence:["#3b82f6","#eab308","#22c55e"], correct:false },
+            { sequence:["#22c55e","#3b82f6","#eab308"], correct:false },
+        ]},
+      ],
+      medium:[
+        { type:"stroop", question:{ text:"AMARELO", color:"green" }, options:[
+            { text:"AZUL", color:"blue", correct:false },
+            { text:"VERDE", color:"green", correct:false },
+            { text:"AMARELO", color:"yellow", correct:true },
+            { text:"ROXO", color:"purple", correct:false },
+        ]},
+        { type:"illusion", question:{ description:"Qual bloco mudou de posição?", animation:[
+            { id:1, color:"#ef4444", x:10, y:10 },
+            { id:2, color:"#3b82f6", x:40, y:30 },
+            { id:3, color:"#22c55e", x:70, y:15 }
+          ], movements:[
+            { id:2, x:60, y:60 }
+          ]
+        }, options:[
+          { color:"#ef4444", correct:false },
+          { color:"#3b82f6", correct:true },
+          { color:"#22c55e", correct:false },
+          { color:"#eab308", correct:false },
+        ]},
+        { type:"memory", question:{ shapes:[
+            { type:"circle", color:"purple", duration:450 },
+            { type:"square", color:"yellow", duration:450 },
+            { type:"circle", color:"red", duration:450 },
+            { type:"square", color:"green", duration:450 },
+        ]}, options:[
+            { type:"circle", color:"purple" },
+            { type:"square", color:"yellow" },
+            { type:"circle", color:"red" },
+            { type:"square", color:"green" },
+        ]},
+      ],
+      hard:[
+        { type:"stroop", question:{ text:"ROXO", color:"red" }, options:[
+            { text:"VERDE", color:"green", correct:false },
+            { text:"ROXO", color:"purple", correct:true },
+            { text:"AZUL", color:"blue", correct:false },
+            { text:"AMARELO", color:"yellow", correct:false },
+        ]},
+        { type:"sequence", question:{ description:"Concentre-se! Sequência rápida de 4 cores.", sequence:[
+            { color:"#ef4444", duration:300 },
+            { color:"#22c55e", duration:300 },
+            { color:"#eab308", duration:300 },
+            { color:"#3b82f6", duration:300 },
+        ]}, options:[
+            { sequence:["#ef4444","#22c55e","#eab308","#3b82f6"], correct:true },
+            { sequence:["#22c55e","#ef4444","#eab308","#3b82f6"], correct:false },
+            { sequence:["#ef4444","#eab308","#22c55e","#3b82f6"], correct:false },
+            { sequence:["#ef4444","#22c55e","#3b82f6","#eab308"], correct:false },
+        ]},
+        { type:"memory", question:{ shapes:[
+            { type:"hexagon", color:"#22c55e", duration:350 },
+            { type:"triangle", color:"#eab308", duration:350 },
+            { type:"star", color:"#ef4444", duration:350 },
+            { type:"circle", color:"#3b82f6", duration:350 },
+            { type:"square", color:"#a855f7", duration:350 },
+        ]}, options:[
+            { type:"hexagon", color:"#22c55e" },
+            { type:"triangle", color:"#eab308" },
+            { type:"star", color:"#ef4444" },
+            { type:"circle", color:"#3b82f6" },
+            { type:"square", color:"#a855f7" },
+          ]},
+      ]
+    };
+
+    // ======== DOM ========
+    const difficultyScreen=document.getElementById('difficulty-screen');
+    const gameScreen=document.getElementById('game-screen');
+    const resultsScreen=document.getElementById('results-screen');
+    const challengeDisplay=document.getElementById('challenge-display');
+    const optionsContainer=document.getElementById('options-container');
+    const xpCounter=document.getElementById('xp-counter');
+    const levelCounter=document.getElementById('level-counter');
+    const progressBar=document.querySelector('#progress-bar div');
+    const timerText=document.getElementById('timer-text');
+    const timerCircle=document.querySelector('.timer-circle');
+    const stageTitle=document.getElementById('stage-title');
+    const resultTitle=document.getElementById('result-title');
+    const resultMessage=document.getElementById('result-message');
+    const nextLevelBtn=document.getElementById('next-level-btn');
+    const menuBtn=document.getElementById('menu-btn');
+    const starsContainer=document.getElementById('stars-container');
+    const pauseBtn=document.getElementById('pause-btn');
+    const muteBtn=document.getElementById('mute-btn');
+    const hintBtn=document.getElementById('star-button');
+
+    // ======== Áudio simples (WebAudio) ========
+    let actx; function beep(type='sine', freq=660, dur=0.12, vol=0.05){
+      if(gameState.muted) return; if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
+      const o=actx.createOscillator(), g=actx.createGain(); o.type=type; o.frequency.value=freq; g.gain.value=vol; o.connect(g); g.connect(actx.destination); o.start(); setTimeout(()=>{o.stop();}, dur*1000);
+    }
+
+    // ======== Estrelas de fundo ========
+    function createStars(){
+      starsContainer.innerHTML='';
+      const N=120; for(let i=0;i<N;i++){const s=document.createElement('div'); s.className='star';
+        const x=Math.random()*100, y=Math.random()*100, size=Math.random()*2.5+0.5, delay=Math.random()*2;
+        s.style.left=`${x}%`; s.style.top=`${y}%`; s.style.width=`${size}px`; s.style.height=`${size}px`; s.style.animationDelay=`${delay}s`; starsContainer.appendChild(s);
+      }
+    }
+
+    // ======== Dificuldade ========
+    document.querySelectorAll('.difficulty-option').forEach(opt=>{
+      opt.addEventListener('click',()=>{
+        const d=opt.dataset.difficulty;
+        if(d==='medium' && gameState.xp<150){alert(`Precisa de 150 XP! XP atual: ${gameState.xp}`); return;}
+        if(d==='hard' && gameState.xp<250){alert(`Precisa de 250 XP! XP atual: ${gameState.xp}`); return;}
+        gameState.difficulty=d; gameState.level=1; gameState.hintUsed=false;
+        switch(d){
+          case 'easy': gameState.timeLimit=10; gameState.stageName='NEBULOSA'; gameState.stageColor='text-green-400'; break;
+          case 'medium': gameState.timeLimit=7; gameState.stageName='CONSTELAÇÃO'; gameState.stageColor='text-yellow-400'; break;
+          case 'hard': gameState.timeLimit=5; gameState.stageName='ÓRION'; gameState.stageColor='text-red-400'; break;
         }
-        
-        // Set difficulty and start game
-        document.querySelectorAll('.difficulty-option').forEach(option => {
-            option.addEventListener('click', function() {
-                const selectedDifficulty = this.dataset.difficulty;
+        gameState.timeLeft=gameState.timeLimit; updateUI(); startGame();
+      });
+      // acessibilidade: Enter/Space
+      opt.addEventListener('keydown', (e)=>{if((e.key==='Enter'||e.key===' ') && !opt.classList.contains('cursor-not-allowed')) opt.click();});
+    });
 
-                // Verifica se o nível está desbloqueado
-                if (selectedDifficulty === 'medium' && gameState.xp < 150) {
-                    alert(`Você precisa de 150 XP para desbloquear o nível médio! XP atual: ${gameState.xp}`);
-                    return;
-                }
+    // ======== Jogo ========
+    function startGame(){
+      difficultyScreen.classList.add('hidden'); gameScreen.classList.remove('hidden'); resultsScreen.classList.add('hidden');
+      stageTitle.textContent=gameState.stageName; stageTitle.className=`text-xl ${gameState.stageColor}`;
+      loadChallenge(); startTimer();
+    }
 
-                if (selectedDifficulty === 'hard' && gameState.xp < 250) {
-                    alert(`Você precisa de 250 XP para desbloquear o nível difícil! XP atual: ${gameState.xp}`);
-                    return;
-                }
+    function loadChallenge(){
+      const arr=challenges[gameState.difficulty]; gameState.currentChallenge=arr[gameState.level-1];
+      challengeDisplay.innerHTML=''; optionsContainer.innerHTML='';
+      if(!gameState.currentChallenge){ // fallback
+        showCompletion(); return;
+      }
+      switch(gameState.currentChallenge.type){
+        case 'stroop': displayStroopChallenge(); break;
+        case 'memory': displayMemoryChallenge(); break;
+        case 'illusion': displayIllusionChallenge(); break;
+        case 'sequence': displaySequenceChallenge(); break;
+      }
+    }
 
-                // Define a dificuldade e configura o jogo
-                gameState.difficulty = selectedDifficulty;
+    function displayStroopChallenge(){
+      const {question, options}=gameState.currentChallenge;
+      const q=document.createElement('div'); q.className='text-3xl mb-6'; q.style.color=question.color; q.textContent=question.text; challengeDisplay.appendChild(q);
+      options.forEach((opt,i)=>{
+        const b=document.createElement('button'); b.className='option bg-gray-800 hover:bg-gray-700 p-4 rounded-lg transition-colors'; b.style.color=opt.color; b.textContent=opt.text; b.setAttribute('data-idx',i+1);
+        b.addEventListener('click',()=> handleAnswer(opt.correct, b)); optionsContainer.appendChild(b);
+      });
+    }
 
-                // Define o limite de tempo e outras configurações com base na dificuldade
-                switch (gameState.difficulty) {
-                    case 'easy':
-                        gameState.timeLimit = 10;
-                        gameState.stageName = "NEBULOSA";
-                        gameState.stageColor = "text-green-400";
-                        break;
-                    case 'medium':
-                        gameState.timeLimit = 7;
-                        gameState.stageName = "CONSTELAÇÃO";
-                        gameState.stageColor = "text-yellow-400";
-                        break;
-                    case 'hard':
-                        gameState.timeLimit = 5;
-                        gameState.stageName = "ÓRION";
-                        gameState.stageColor = "text-red-400";
-                        break;
-                }
-
-                gameState.timeLeft = gameState.timeLimit;
-                gameState.level = 1;
-
-                updateUI();
-                startGame();
-            });
-        });
-        
-        // Start the game
-        function startGame() {
-            difficultyScreen.classList.add('hidden');
-            gameScreen.classList.remove('hidden');
-            resultsScreen.classList.add('hidden');
-            
-            stageTitle.textContent = gameState.stageName;
-            stageTitle.className = `text-xl ${gameState.stageColor}`;
-            
-            loadChallenge();
-            startTimer();
+    function displayMemoryChallenge(){
+      const {question, options}=gameState.currentChallenge; const timerEl=document.querySelector('.timer'); timerEl.style.visibility='hidden';
+      const seqC=document.createElement('div'); seqC.className='flex justify-center space-x-4 mb-4'; challengeDisplay.appendChild(seqC);
+      const desc=document.createElement('div'); desc.className='text-sm md:text-lg mb-2'; desc.textContent='Observe a sequência de cores:'; challengeDisplay.insertBefore(desc, seqC);
+      let i=0; gameState.playerSequence=[];
+      function next(){
+        if(i<question.shapes.length){ const s=question.shapes[i]; seqC.innerHTML=''; const el=createShapeElement(s.type,s.color); seqC.appendChild(el); i++; setTimeout(next, s.duration); }
+        else{
+          seqC.innerHTML=''; const ask=document.createElement('div'); ask.className='text-sm md:text-lg mb-3'; ask.textContent='Repita tocando nas formas na ordem exibida:'; challengeDisplay.insertBefore(ask, seqC);
+          options.forEach((opt)=>{ const btn=document.createElement('button'); btn.className='option bg-gray-800 hover:bg-gray-700 p-3 rounded-lg'; const shape=createShapeElement(opt.type,opt.color); btn.appendChild(shape);
+            btn.addEventListener('click',()=>{ gameState.playerSequence.push(opt.color); if(gameState.playerSequence.length===question.shapes.length){ checkAnswer(gameState.playerSequence); }});
+            optionsContainer.appendChild(btn);
+          });
+          timerEl.style.visibility='visible'; gameState.timeLeft=gameState.timeLimit; startTimer();
         }
-        
-        // Load a challenge
-        function loadChallenge() {
-            // Carrega o desafio correspondente ao nível atual
-            const availableChallenges = challenges[gameState.difficulty];
-            gameState.currentChallenge = availableChallenges[gameState.level - 1]; // Carrega o desafio baseado no nível atual
+      } next();
+    }
 
-            // Limpa o conteúdo anterior
-            challengeDisplay.innerHTML = '';
-            optionsContainer.innerHTML = '';
+    function displayIllusionChallenge(){
+      const {question, options}=gameState.currentChallenge; const desc=document.createElement('div'); desc.className='text-lg mb-4'; desc.textContent=question.description; challengeDisplay.appendChild(desc);
+      const animC=document.createElement('div'); animC.className='relative w-full h-48 mb-6'; challengeDisplay.appendChild(animC);
+      question.animation.forEach(b=>{ const d=document.createElement('div'); d.id=`block-${b.id}`; d.className='absolute w-12 h-12 transition-all duration-500'; d.style.background=b.color; d.style.left=b.x+'%'; d.style.top=b.y+'%'; animC.appendChild(d); });
+      setTimeout(()=>{ question.movements.forEach(m=>{ const blk=document.getElementById(`block-${m.id}`); if(blk){ blk.style.left=m.x+'%'; blk.style.top=m.y+'%'; }}); }, 800);
+      options.forEach((opt)=>{ const b=document.createElement('button'); b.className='option bg-gray-800 hover:bg-gray-700 p-4 rounded-lg transition-colors'; const box=document.createElement('div'); box.className='w-8 h-8 mx-auto'; box.style.background=opt.color; b.appendChild(box); b.addEventListener('click',()=> handleAnswer(opt.correct,b)); optionsContainer.appendChild(b); });
+    }
 
-            // Exibe o desafio com base no tipo
-            if (gameState.currentChallenge.type === 'stroop') {
-                displayStroopChallenge();
-            } else if (gameState.currentChallenge.type === 'memory') {
-                displayMemoryChallenge();
-            } else if (gameState.currentChallenge.type === 'illusion') {
-                displayIllusionChallenge();
-            } else if (gameState.currentChallenge.type === 'sequence') {
-                displaySequenceChallenge();
-            }
-        }
-        
-        // Display Stroop effect challenge
-        function displayStroopChallenge() {
-            const question = gameState.currentChallenge.question;
-            
-            // Display the question
-            const questionElement = document.createElement('div');
-            questionElement.classList.add('text-3xl', 'mb-6');
-            questionElement.style.color = question.color;
-            questionElement.textContent = question.text;
-            challengeDisplay.appendChild(questionElement);
-            
-            // Display options
-            gameState.currentChallenge.options.forEach((option, index) => {
-                const optionElement = document.createElement('button');
-                optionElement.classList.add('option', 'bg-gray-800', 'hover:bg-gray-700', 'p-4', 'rounded-lg', 'transition-colors');
-                optionElement.style.color = option.color;
-                optionElement.textContent = option.text;
-                
-                optionElement.addEventListener('click', () => {
-                    checkAnswer(option.correct);
-                });
-                
-                optionsContainer.appendChild(optionElement);
-            });
-        }
-        
-        // Display memory challenge
-        function displayMemoryChallenge() {
-            const question = gameState.currentChallenge.question;
+    function displaySequenceChallenge(){
+      const {question, options}=gameState.currentChallenge; const desc=document.createElement('div'); desc.className='text-lg mb-4'; desc.textContent=question.description; challengeDisplay.appendChild(desc);
+      const seqC=document.createElement('div'); seqC.className='flex justify-center space-x-4 mb-6'; challengeDisplay.appendChild(seqC);
+      let i=0; function show(){ if(i<question.sequence.length){ const c=question.sequence[i]; const el=document.createElement('div'); el.className='w-12 h-12 rounded'; el.style.background=c.color; seqC.innerHTML=''; seqC.appendChild(el); i++; setTimeout(show, c.duration); } else { seqC.innerHTML=''; const ask=document.createElement('div'); ask.className='text-lg mb-2'; ask.textContent='Qual foi a sequência correta?'; challengeDisplay.insertBefore(ask, seqC);
+          options.forEach((opt)=>{ const b=document.createElement('button'); b.className='option bg-gray-800 hover:bg-gray-700 p-4 rounded-lg transition-colors flex flex-col items-center'; const colors=document.createElement('div'); colors.className='flex space-x-2 mb-2'; opt.sequence.forEach(cc=>{ const d=document.createElement('div'); d.className='w-4 h-4 rounded'; d.style.background=cc; colors.appendChild(d); }); b.appendChild(colors); b.addEventListener('click',()=> handleAnswer(opt.correct,b)); optionsContainer.appendChild(b); });
+        }} show();
+    }
 
-            // Esconde o cronômetro até a sequência ser exibida
-            const timerElement = document.querySelector('.timer');
-            timerElement.style.visibility = 'hidden';
+    function createShapeElement(type,color){
+      const el=document.createElement('div'); el.className='w-14 h-14 mx-2';
+      switch(type){
+        case 'square': el.style.background=color; break;
+        case 'circle': el.style.background=color; el.style.borderRadius='50%'; break;
+        case 'triangle': el.style.width='0'; el.style.height='0'; el.style.borderLeft='14px solid transparent'; el.style.borderRight='14px solid transparent'; el.style.borderBottom=`28px solid ${color}`; break;
+        case 'star': el.innerHTML=`<svg viewBox="0 0 24 24" fill="${color}"><polygon points="12,2 15,8 22,9 17,14 18,21 12,18 6,21 7,14 2,9 9,8"/></svg>`; break;
+        case 'hexagon': el.innerHTML=`<svg viewBox="0 0 24 24" fill="${color}"><polygon points="12,2 20,6 20,18 12,22 4,18 4,6"/></svg>`; break;
+      }
+      return el;
+    }
 
-            // Display the sequence of shapes
-            const sequenceContainer = document.createElement('div');
-            sequenceContainer.classList.add('flex', 'justify-center', 'space-x-4', 'mb-6');
-            challengeDisplay.appendChild(sequenceContainer);
+    // ======== Resposta / pontuação ========
+    function handleAnswer(isCorrect, buttonEl){ if(isCorrect){ buttonEl&&buttonEl.classList.add('correct'); beep('triangle',840,0.09); correctFlow(); } else { buttonEl&&buttonEl.classList.add('wrong'); document.body.classList.add('shake'); setTimeout(()=>document.body.classList.remove('shake'),500); beep('sawtooth',240,0.12); showResult(false); } }
 
-            // Mostra a descrição
-            const descElement = document.createElement('div');
-            descElement.classList.add('text-lg', 'mb-4');
-            descElement.textContent = "Observe a sequência de cores:";
-            challengeDisplay.insertBefore(descElement, sequenceContainer);
+    function correctFlow(){
+      gameState.xp += 10; localStorage.setItem("reflex_orion_xp", String(gameState.xp));
+      showExplosion(); updateUI(); showResult(true);
+    }
 
-            // Exibe as formas uma por uma
-            let currentIndex = 0;
+    function checkAnswer(playerSequence){ // apenas para memory
+      clearTimer(); const correctSequence = gameState.currentChallenge.question.shapes.map(s=>s.color);
+      const ok = JSON.stringify(playerSequence)===JSON.stringify(correctSequence);
+      ok ? correctFlow() : (document.body.classList.add('shake'), setTimeout(()=>document.body.classList.remove('shake'),500), showResult(false));
+    }
 
-            function showNextShape() {
-                if (currentIndex < question.shapes.length) {
-                    const shape = question.shapes[currentIndex];
-                    const shapeElement = createShapeElement(shape.type, shape.color);
+    function showExplosion(){ const e=document.createElement('div'); e.className='explosion'; e.style.left='50%'; e.style.top='50%'; e.style.transform='translate(-50%,-50%)'; document.getElementById('root').appendChild(e); setTimeout(()=>e.remove(), 800); }
 
-                    sequenceContainer.innerHTML = '';
-                    sequenceContainer.appendChild(shapeElement);
+    function showResult(success){ clearTimer(); gameScreen.classList.add('hidden'); resultsScreen.classList.remove('hidden');
+      if(success){ resultTitle.textContent='ACERTOU!'; resultTitle.className='text-3xl mb-6 text-green-400'; resultMessage.textContent=`+10 XP! Total: ${gameState.xp} XP`; }
+      else { resultTitle.textContent='ERROU!'; resultTitle.className='text-3xl mb-6 text-red-400'; resultMessage.textContent='Tente novamente no próximo nível!'; }
+    }
 
-                    currentIndex++;
-                    setTimeout(showNextShape, shape.duration);
-                } else {
-                    // Após exibir a sequência, mostra as opções e inicia o cronômetro
-                    sequenceContainer.innerHTML = '';
+    function showCompletion(){ clearTimer(); gameScreen.classList.add('hidden'); resultsScreen.classList.remove('hidden');
+      resultTitle.textContent='CONCLUÍDO!'; resultTitle.className='text-3xl mb-6 text-purple-400'; resultMessage.innerHTML=`Parabéns! Você completou todas as fases!<br>Total de XP: ${gameState.xp}<br><br>Continue jogando para desbloquear novos níveis!`; nextLevelBtn.textContent='JOGAR NOVAMENTE';
+    }
 
-                    const questionText = document.createElement('div');
-                    questionText.classList.add('text-lg', 'mb-4');
-                    questionText.textContent = "Repita a sequência de cores:";
-                    challengeDisplay.insertBefore(questionText, sequenceContainer);
+    nextLevelBtn.addEventListener('click',()=>{ if(gameState.level<gameState.maxLevels){ gameState.level++; } else { gameState.level=1; }
+      gameState.hintUsed=false; gameState.timeLeft=gameState.timeLimit; updateUI(); startGame();
+    });
+    menuBtn.addEventListener('click',()=>{ resultsScreen.classList.add('hidden'); difficultyScreen.classList.remove('hidden'); gameScreen.classList.add('hidden'); nextLevelBtn.textContent='PRÓXIMO NÍVEL'; updateUI(); });
 
-                    // Inicializa o array para armazenar a sequência do jogador
-                    gameState.playerSequence = [];
+    // ======== Timer / Pause ========
+    function startTimer(){ clearTimer(); updateTimerDisplay(); gameState.paused=false; pauseBtn.textContent='⏸️ Pausar';
+      gameState.timer=setInterval(()=>{ if(gameState.paused) return; gameState.timeLeft--; updateTimerDisplay(); if(gameState.timeLeft<=0){ clearTimer(); handleAnswer(false); } },1000);
+    }
+    function clearTimer(){ if(gameState.timer){ clearInterval(gameState.timer); gameState.timer=null; } }
+    function updateTimerDisplay(){ timerText.textContent=gameState.timeLeft; const R=25, C=2*Math.PI*R; const off=C - (gameState.timeLeft / gameState.timeLimit) * C; timerCircle.style.strokeDashoffset=off; timerCircle.style.stroke = gameState.timeLeft<=gameState.timeLimit*0.3 ? '#ef4444' : (gameState.timeLeft<=gameState.timeLimit*0.6 ? '#eab308' : '#7e22ce'); }
 
-                    // Exibe as opções
-                    gameState.currentChallenge.options.forEach((option) => {
-                        const optionElement = document.createElement('button');
-                        optionElement.classList.add('option', 'bg-gray-800', 'hover:bg-gray-700', 'p-4', 'rounded-lg', 'transition-colors');
+    pauseBtn.addEventListener('click',()=>{ gameState.paused=!gameState.paused; pauseBtn.textContent = gameState.paused ? '▶️ Retomar' : '⏸️ Pausar'; beep('sine',520,0.06); });
+    muteBtn.addEventListener('click',()=>{ gameState.muted=!gameState.muted; muteBtn.textContent = gameState.muted ? '🔇 Mudo' : '🔊 Som'; });
 
-                        const shapeElement = createShapeElement(option.type, option.color);
-                        optionElement.appendChild(shapeElement);
+    // ======== Dica (revela a correta por 1s) ========
+    hintBtn.addEventListener('click',()=>{ if(gameState.hintUsed || gameScreen.classList.contains('hidden')) return; const opts=[...document.querySelectorAll('#options-container .option')]; if(!opts.length) return; const idx=findCorrectIndex(); if(idx>-1){
+        const el=opts[idx]; el.classList.add('ring-4','ring-yellow-300'); setTimeout(()=>el.classList.remove('ring-4','ring-yellow-300'), 1000); gameState.hintUsed=true; beep('square',700,0.08);
+      }
+    });
+    function findCorrectIndex(){ const cc=gameState.currentChallenge; if(cc.type==='stroop'){ return cc.options.findIndex(o=>o.correct); } if(cc.type==='illusion' || cc.type==='sequence'){ return cc.options.findIndex(o=>o.correct); } if(cc.type==='memory'){ return 0; } return -1; }
 
-                        // Adiciona o evento de clique para registrar a sequência do jogador
-                        optionElement.addEventListener('click', () => {
-                            gameState.playerSequence.push(option.color); // Adiciona a cor selecionada à sequência do jogador
+    // ======== UI ========
+    function updateUI(){ xpCounter.textContent=gameState.xp; levelCounter.textContent=`${gameState.level}/${gameState.maxLevels}`; const pct=(gameState.level/gameState.maxLevels)*100; progressBar.style.width=`${pct}%`;
+      document.querySelectorAll('.difficulty-option').forEach(opt=>{ const d=opt.dataset.difficulty; if(d==='medium' && gameState.xp<150){ opt.classList.add('opacity-50','cursor-not-allowed'); opt.setAttribute('aria-disabled','true'); } else if(d==='hard' && gameState.xp<250){ opt.classList.add('opacity-50','cursor-not-allowed'); opt.setAttribute('aria-disabled','true'); } else { opt.classList.remove('opacity-50','cursor-not-allowed'); opt.removeAttribute('aria-disabled'); }});
+    }
 
-                            // Verifica se a sequência está completa
-                            if (gameState.playerSequence.length === question.shapes.length) {
-                                checkAnswer(gameState.playerSequence); // Valida a sequência completa
-                            }
-                        });
+    // ======== Teclado 1..4 ========
+    window.addEventListener('keydown',(e)=>{
+      if(gameScreen.classList.contains('hidden')) return; const num=parseInt(e.key,10); if(num>=1 && num<=4){ const btn=optionsContainer.querySelector(`[data-idx="${num}"]`); if(btn){ btn.click(); }}
+      if(e.key.toLowerCase()==='p'){ pauseBtn.click(); }
+      if(e.key.toLowerCase()==='m'){ muteBtn.click(); }
+    });
 
-                        optionsContainer.appendChild(optionElement);
-                    });
-
-                    // Mostra o cronômetro e inicia
-                    timerElement.style.visibility = 'visible';
-                    gameState.timeLeft = gameState.timeLimit; // Reinicia o tempo
-                    startTimer(); // Inicia o cronômetro
-                }
-            }
-
-            showNextShape();
-        }
-        
-        // Display illusion challenge
-        function displayIllusionChallenge() {
-            const question = gameState.currentChallenge.question;
-            
-            // Display description
-            const descElement = document.createElement('div');
-            descElement.classList.add('text-lg', 'mb-4');
-            descElement.textContent = question.description;
-            challengeDisplay.appendChild(descElement);
-            
-            // Create animation container
-            const animationContainer = document.createElement('div');
-            animationContainer.classList.add('relative', 'w-full', 'h-48', 'mb-6');
-            challengeDisplay.appendChild(animationContainer);
-            
-            // Create blocks
-            question.animation.forEach(block => {
-                const blockElement = document.createElement('div');
-                blockElement.id = `block-${block.id}`;
-                blockElement.classList.add('absolute', 'w-12', 'h-12', 'transition-all', 'duration-500');
-                blockElement.style.backgroundColor = block.color;
-                blockElement.style.left = `${block.x}%`;
-                blockElement.style.top = `${block.y}%`;
-                
-                animationContainer.appendChild(blockElement);
-            });
-            
-            // Animate blocks after a delay
-            setTimeout(() => {
-                question.movements.forEach(move => {
-                    const block = document.getElementById(`block-${move.id}`);
-                    if (block) {
-                        block.style.left = `${move.x}%`;
-                        block.style.top = `${move.y}%`;
-                    }
-                });
-            }, 1000);
-            
-            // Display options
-            gameState.currentChallenge.options.forEach((option, index) => {
-                const optionElement = document.createElement('button');
-                optionElement.classList.add('option', 'bg-gray-800', 'hover:bg-gray-700', 'p-4', 'rounded-lg', 'transition-colors');
-                
-                const blockElement = document.createElement('div');
-                blockElement.classList.add('w-8', 'h-8', 'mx-auto');
-                blockElement.style.backgroundColor = option.color;
-                
-                optionElement.appendChild(blockElement);
-                
-                optionElement.addEventListener('click', () => {
-                    checkAnswer(option.correct);
-                });
-                
-                optionsContainer.appendChild(optionElement);
-            });
-        }
-        
-        // Display sequence challenge
-        function displaySequenceChallenge() {
-            const question = gameState.currentChallenge.question;
-            
-            // Display description
-            const descElement = document.createElement('div');
-            descElement.classList.add('text-lg', 'mb-4');
-            descElement.textContent = question.description;
-            challengeDisplay.appendChild(descElement);
-            
-            // Create sequence container
-            const sequenceContainer = document.createElement('div');
-            sequenceContainer.classList.add('flex', 'justify-center', 'space-x-4', 'mb-6');
-            challengeDisplay.appendChild(sequenceContainer);
-            
-            // Show sequence
-            let currentIndex = 0;
-            
-            function showNextColor() {
-                if (currentIndex < question.sequence.length) {
-                    const color = question.sequence[currentIndex];
-                    const colorElement = document.createElement('div');
-                    colorElement.classList.add('w-12', 'h-12', 'rounded-full');
-                    colorElement.style.backgroundColor = color.color;
-                    
-                    sequenceContainer.innerHTML = '';
-                    sequenceContainer.appendChild(colorElement);
-                    
-                    currentIndex++;
-                    setTimeout(showNextColor, color.duration);
-                } else {
-                    // After showing sequence, display options
-                    sequenceContainer.innerHTML = '';
-                    
-                    const questionText = document.createElement('div');
-                    questionText.classList.add('text-lg', 'mb-4');
-                    questionText.textContent = "Qual foi a sequência correta?";
-                    challengeDisplay.insertBefore(questionText, sequenceContainer);
-                    
-                    // Display options
-                    gameState.currentChallenge.options.forEach((option, index) => {
-                        const optionElement = document.createElement('button');
-                        optionElement.classList.add('option', 'bg-gray-800', 'hover:bg-gray-700', 'p-4', 'rounded-lg', 'transition-colors');
-                        
-                        const sequenceText = document.createElement('div');
-                        sequenceText.classList.add('text-sm');
-                        
-                        // Create color dots for sequence
-                        const colorsContainer = document.createElement('div');
-                        colorsContainer.classList.add('flex', 'justify-center', 'space-x-2', 'mb-2');
-                        
-                        option.sequence.forEach(color => {
-                            const dot = document.createElement('div');
-                            dot.classList.add('w-4', 'h-4', 'rounded-full');
-                            dot.style.backgroundColor = color;
-                            colorsContainer.appendChild(dot);
-                        });
-                        
-                        sequenceText.appendChild(colorsContainer);
-                        optionElement.appendChild(sequenceText);
-                        
-                        optionElement.addEventListener('click', () => {
-                            checkAnswer(option.correct);
-                        });
-                        
-                        optionsContainer.appendChild(optionElement);
-                    });
-                }
-            }
-            
-            showNextColor();
-        }
-        
-        // Create shape element
-        function createShapeElement(type, color) {
-            const shapeElement = document.createElement('div');
-            shapeElement.classList.add('w-16', 'h-16');
-            
-            switch(type) {
-                case 'square':
-                    shapeElement.style.backgroundColor = color;
-                    break;
-                case 'circle':
-                    shapeElement.style.backgroundColor = color;
-                    shapeElement.style.borderRadius = '50%';
-                    break;
-                case 'triangle':
-                    shapeElement.style.width = '0';
-                    shapeElement.style.height = '0';
-                    shapeElement.style.borderLeft = '8px solid transparent';
-                    shapeElement.style.borderRight = '8px solid transparent';
-                    shapeElement.style.borderBottom = `16px solid ${color}`;
-                    break;
-                case 'star':
-                    shapeElement.innerHTML = `
-                        <svg viewBox="0 0 24 24" fill="${color}">
-                            <polygon points="12,2 15,8 22,9 17,14 18,21 12,18 6,21 7,14 2,9 9,8" />
-                        </svg>
-                    `;
-                    break;
-                case 'hexagon':
-                    shapeElement.innerHTML = `
-                        <svg viewBox="0 0 24 24" fill="${color}">
-                            <polygon points="12,2 20,6 20,18 12,22 4,18 4,6" />
-                        </svg>
-                    `;
-                    break;
-            }
-            
-            return shapeElement;
-        }
-        
-        // Check answer
-        function checkAnswer(playerSequence) {
-            // Certifique-se de parar o cronômetro
-            if (gameState.timer) {
-                clearInterval(gameState.timer);
-                gameState.timer = null; // Reseta o estado do cronômetro
-            }
-
-            // Verifica se o tipo do desafio é "memory" ou outro
-            if (gameState.currentChallenge.type === "memory") {
-                // Obtém a sequência correta
-                const correctSequence = gameState.currentChallenge.question.shapes.map(shape => shape.color);
-
-                // Compara a sequência do jogador com a sequência correta
-                const isCorrect = JSON.stringify(playerSequence) === JSON.stringify(correctSequence);
-
-                if (isCorrect) {
-                    // Resposta correta
-                    gameState.xp += 10; // Incrementa o XP
-                    showExplosion();
-
-                    // Atualiza a interface
-                    updateUI();
-
-                    // Mostra o resultado de sucesso
-                    if (gameState.level < gameState.maxLevels) {
-                        showResult(true);
-                    } else {
-                        // Concluiu todos os níveis
-                        showCompletion();
-                    }
-                } else {
-                    // Resposta errada
-                    document.body.classList.add('shake');
-                    setTimeout(() => {
-                        document.body.classList.remove('shake');
-                    }, 500);
-
-                    // Mostra o resultado de falha
-                    resultTitle.textContent = "ERROU!";
-                    resultTitle.className = "text-3xl mb-6 text-red-400";
-                    resultMessage.textContent = "Tente novamente no próximo nível!";
-                    showResult(false);
-                }
-            } else {
-                // Para outros tipos de desafios
-                if (playerSequence) {
-                    showResult(true);
-                } else {
-                    showResult(false);
-                }
-            }
-        }
-        
-        // Show explosion effect
-        function showExplosion() {
-            const explosion = document.createElement('div');
-            explosion.classList.add('explosion');
-            
-            // Random position near the center
-            const x = 50 + (Math.random() * 20 - 10);
-            const y = 50 + (Math.random() * 20 - 10);
-            
-            explosion.style.left = `${x}%`;
-            explosion.style.top = `${y}%`;
-            
-            document.body.appendChild(explosion);
-            
-            // Remove after animation
-            setTimeout(() => {
-                explosion.remove();
-            }, 800);
-        }
-        
-        // Show result screen
-        function showResult(isSuccess) {
-            gameScreen.classList.add('hidden');
-            resultsScreen.classList.remove('hidden');
-
-            if (isSuccess) {
-                resultTitle.textContent = "ACERTOU!";
-                resultTitle.className = "text-3xl mb-6 text-green-400";
-                resultMessage.textContent = `+10 XP! Total: ${gameState.xp} XP`;
-            } else {
-                resultTitle.textContent = "ERROU!";
-                resultTitle.className = "text-3xl mb-6 text-red-400";
-                resultMessage.textContent = "Tente novamente no próximo nível!";
-            }
-        }
-        
-        // Show completion screen
-        function showCompletion() {
-            gameScreen.classList.add('hidden');
-            resultsScreen.classList.remove('hidden');
-            
-            resultTitle.textContent = "CONCLUÍDO!";
-            resultTitle.className = "text-3xl mb-6 text-purple-400";
-            resultMessage.innerHTML = `
-                Parabéns! Você completou todas as fases!<br>
-                Total de XP: ${gameState.xp}<br><br>
-                Continue jogando para desbloquear novos níveis!
-            `;
-            
-            // Change next level button to "Jogar Novamente"
-            nextLevelBtn.textContent = "JOGAR NOVAMENTE";
-        }
-        
-        // Next level button
-        nextLevelBtn.addEventListener('click', function () {
-            // Certifique-se de parar o cronômetro antes de iniciar o próximo nível
-            if (gameState.timer) {
-                clearInterval(gameState.timer);
-                gameState.timer = null;
-            }
-
-            if (gameState.level < gameState.maxLevels) {
-                gameState.level++;
-            } else {
-                // Reinicia o nível atual, mas mantém o XP acumulado
-                gameState.level = 1;
-            }
-
-            gameState.timeLeft = gameState.timeLimit;
-            updateUI();
-            startGame();
-        });
-        
-        // Menu button
-        menuBtn.addEventListener('click', function() {
-            difficultyScreen.classList.remove('hidden');
-            gameScreen.classList.add('hidden');
-            resultsScreen.classList.add('hidden');
-        });
-        
-        // Start timer
-        function startTimer() {
-            // Certifique-se de limpar qualquer cronômetro anterior
-            if (gameState.timer) {
-                clearInterval(gameState.timer);
-            }
-
-            updateTimerDisplay();
-
-            gameState.timer = setInterval(() => {
-                gameState.timeLeft--;
-                updateTimerDisplay();
-
-                if (gameState.timeLeft <= 0) {
-                    clearInterval(gameState.timer); // Para o cronômetro
-                    gameState.timer = null; // Reseta o estado do cronômetro
-                    checkAnswer(false); // Tempo esgotado conta como resposta errada
-                }
-            }, 1000);
-        }
-        
-        // Update timer display
-        function updateTimerDisplay() {
-            timerText.textContent = gameState.timeLeft;
-            
-            // Calculate circle progress
-            const circumference = 2 * Math.PI * 25;
-            const offset = circumference - (gameState.timeLeft / gameState.timeLimit) * circumference;
-            timerCircle.style.strokeDashoffset = offset;
-            
-            // Change color based on time left
-            if (gameState.timeLeft <= gameState.timeLimit * 0.3) {
-                timerCircle.style.stroke = '#ef4444'; // red
-            } else if (gameState.timeLeft <= gameState.timeLimit * 0.6) {
-                timerCircle.style.stroke = '#eab308'; // yellow
-            } else {
-                timerCircle.style.stroke = '#7e22ce'; // purple
-            }
-        }
-        
-        // Update UI elements
-        function updateUI() {
-            // Atualiza o contador de XP
-            xpCounter.textContent = gameState.xp;
-
-            // Atualiza o contador de nível
-            levelCounter.textContent = `${gameState.level}/${gameState.maxLevels}`;
-
-            // Atualiza a barra de progresso
-            const progressPercent = (gameState.level / gameState.maxLevels) * 100;
-            progressBar.style.width = `${progressPercent}%`;
-
-            // Atualiza a opacidade dos níveis bloqueados
-            document.querySelectorAll('.difficulty-option').forEach(option => {
-                const difficulty = option.dataset.difficulty;
-
-                if (difficulty === 'medium' && gameState.xp < 150) {
-                    option.classList.add('opacity-50', 'cursor-not-allowed');
-                } else if (difficulty === 'hard' && gameState.xp < 250) {
-                    option.classList.add('opacity-50', 'cursor-not-allowed');
-                } else {
-                    option.classList.remove('opacity-50', 'cursor-not-allowed');
-                }
-            });
-
-            // Atualiza a barra de XP
-            const xpPercent = (gameState.xp % 100) / 100 * 100;
-            xpBar.style.width = `${xpPercent}%`;
-
-            // Habilita ou desabilita os botões de dificuldade com base no XP
-            if (gameState.xp >= 150) {
-                mediumBtn.disabled = false;
-                mediumBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            } else {
-                mediumBtn.disabled = true;
-                mediumBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            }
-
-            if (gameState.xp >= 250) {
-                hardBtn.disabled = false;
-                hardBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            } else {
-                hardBtn.disabled = true;
-                hardBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            }
-        }
-        
-        // Initialize game
-        function init() {
-            createStars();
-            updateUI();
-        }
-        
-        // Start the game
-        init();
-
-        
-    </script>
-    <script type="module" src="core/reflex.js"></script>
+    // ======== Init ========
+    function init(){ createStars(); updateUI(); }
+    init();
+  </script>
 </body>
 </html>
