@@ -5,67 +5,73 @@
   <title>Jogos | Level Up Academy</title>
   <link rel="stylesheet" href="jogos.css">
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <style>
-    .game-button {
-      display: block;
-      margin: 1rem auto;
-      padding: 20px 15px;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 15px;
-      text-decoration: none;
-      border: 5px solid;
-      cursor: pointer;
-      box-shadow: 0 0 0 4px black;
-      image-rendering: pixelated;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      text-align: center;
-    }
 
-    .game-button:hover {
-      transform: scale(1.04);
-      box-shadow: 0 0 0 4px #fff, 0 0 9px 9px rgba(255, 255, 255, 0.3);
-    }
+<style>
+  .game-button {
+    display: block;
+    margin: 1rem auto;
+    padding: 20px 15px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 15px;
+    text-decoration: none;
+    border: 5px solid;
+    cursor: pointer;
+    box-shadow: 0 0 0 4px black;
+    image-rendering: pixelated;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-align: center;
+  }
 
-    .caca-palavras {
-      background-color: #00bcd4;
-      color: #fff;
-      border-color: #008ba3;
-    }
+  .game-button:hover {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 4px #fff, 0 0 9px 9px rgba(255, 255, 255, 0.3);
+  }
 
-    .caca-palavras:hover {
-      background-color: #0097a7;
-    }
+  .Reflex_órion {
+    background: linear-gradient(45deg, #00bcd4, #008ba3);
+    color: #fff;
+    border-color: #005f73;
+    text-shadow: 0 0 5px #fff, 0 0 10px #00bcd4;
+    animation: pulse 1.5s infinite;
+  }
 
-    .memoria {
-      background-color: #7e57c2;
-      color: #fff;
-      border-color: #5e35b1;
-    }
+  .Reflex_órion:hover {
+    background: linear-gradient(45deg, #0097a7, #007c91);
+    box-shadow: 0 0 10px #00bcd4, 0 0 40px #008ba3;
+  }
 
-    .memoria:hover {
-      background-color: #5e35b1;
+  @keyframes pulse {
+    0%, 100% {
+      box-shadow: 0 0 15px #00bcd4, 0 0 10px #008ba3;
     }
+    50% {
+      box-shadow: 0 0 10px #00bcd4, 0 0 30px #008ba3;
+    }
+  }
 
-    .fatos {
-      background-color: #ff7043;
-      color: #fff;
-      border-color: #d84315;
-    }
+  .SINAPSE_ESPACIAL {
+    background: linear-gradient(45deg, #82009c, #008ba3);
+    color: #fff;
+    border-color: #005f73;
+    text-shadow: 0 0 5px #fff, 0 0 10px #00bcd4;
+    animation: pulse 1.5s infinite;
+  }
 
-    .fatos:hover {
-      background-color: #bf360c;
-    }
+  .SINAPSE_ESPACIAL:hover {
+    background: linear-gradient(45deg, #0097a7, #007c91);
+    box-shadow: 0 0 10px #00bcd4, 0 0 40px #008ba3;
+  }
 
-    .double {
-      background-color: #4caf50;
-      color: #fff;
-      border-color: #2e7d32;
+  @keyframes pulse {
+    0%, 100% {
+      box-shadow: 0 0 15px #00bcd4, 0 0 10px #008ba3;
     }
+    50% {
+      box-shadow: 0 0 10px #00bcd4, 0 0 30px #008ba3;
+    }
+  }
+</style>
 
-    .double:hover {
-      background-color: #1b5e20;
-    }
-  </style>
 </head>
 
 <body>
@@ -134,14 +140,14 @@
 
   <main class="container">
     <section class="game">
-      <a href="caca-palavras.html" class="game-button caca-palavras">
-        Jogar Caça-Palavras
+      <a href="Reflex_órion.html" class="game-button Reflex_órion">
+        Reflex Órion
       </a>
     </section>
 
     <section class="game">
-      <a href="jogo-memoria.html" class="game-button memoria">
-        Jogar Jogo da Memória
+      <a href="SINAPSE_ESPACIAL.html" class="game-button SINAPSE ESPACIAL">
+      SINAPSE ESPACIAL
       </a>
     </section>
 
@@ -152,19 +158,15 @@
     </section>
 
     <section class="game">
-      <a href="jogo-double.html" class="game-button double">
-        Jogar double programação
-      </a>
+      <button class="game-button double" disabled>
+        🔒 Em breve
+      </button>
     </section>
 
     <section class="game">
-      <h2>Os 4 Elementos</h2>
-      <p>Desafie seus conhecimentos sobre água, fogo, terra e ar. Participe de um quiz interativo e seja o mais rápido a responder corretamente!</p>
-    </section>
-
-    <section class="game">
-      <h2>Jogo da Dedução</h2>
-      <p>Use lógica e raciocínio para resolver enigmas com base em pistas. Um jogo cheio de mistério e ideal para quem ama desafios inteligentes.</p>
+      <button class="game-button" disabled>
+        🔒 Em breve
+      </button>
     </section>
   </main>
 
