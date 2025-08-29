@@ -8,23 +8,37 @@
 </head>
 <body>
     
-    <nav class="menu-principal">
-        <ul>
-          <li><a href="LUA.html">Início</a></li>
-          <li><a href="jogos.html">Jogos</a></li>
-          <li><a href="sobre.html">Sobre o Projeto</a></li>
-        </ul>
-      </nav>
-      
+  <!-- Menu Principal -->
+  <nav class="menu-principal">
+    <ul>
+      <li><a href="LUA.html" class="sound-link">Início</a></li>
+      <li><a href="jogos.html" class="sound-link">Jogos</a></li>
+      <li><a href="sobre.html" class="sound-link">Sobre o Projeto</a></li>
+    </ul>
+  </nav>
+  
+  <!-- PERFIL FLUTUANTE -->
+  <div class="perfil-hover">
+    <img src="avatar.png" alt="Avatar do usuário" class="avatar-icone">
+    <div class="perfil-info">
+      <strong>Guilherme</strong>
+      <a href="perfil.html">Meu Perfil</a>
+      <a href="config.html">Configurações</a>
+      <a href="sair.html">Sair</a>
+    </div>
+  </div>
+
   <header>
     <h1>🌕 Sobre a L.U.A</h1>
     <p>Escolha o que deseja explorar:</p>
+    
+    <!-- Botões interativos das seções -->
     <nav class="menu-missoes">
-      <button onclick="mostrarSecao('o-que-e')">📖 O que é a L.U.A?</button>
-      <button onclick="mostrarSecao('missao')">🎯 Missão do Projeto</button>
-      <button onclick="mostrarSecao('criadores')">🛡️ Conheça os Criadores</button>
-      <button onclick="mostrarSecao('como-funciona')">🧩 Como Funciona?</button>
-      <button onclick="mostrarSecao('mensagem')">💬 Deixe sua Mensagem</button>
+      <button class="sound-link" onclick="mostrarSecao('o-que-e')">📖 O que é a L.U.A?</button>
+      <button class="sound-link" onclick="mostrarSecao('missao')">🎯 Missão do Projeto</button>
+      <button class="sound-link" onclick="mostrarSecao('criadores')">🛡️ Conheça os Criadores</button>
+      <button class="sound-link" onclick="mostrarSecao('como-funciona')">🧩 Como Funciona?</button>
+      <button class="sound-link" onclick="mostrarSecao('mensagem')">💬 Deixe sua Mensagem</button>
     </nav>
   </header>
 
@@ -43,7 +57,7 @@
       <h2>🛡️ Conheça os Criadores</h2>
       <ul>
         <li><strong>PHN - (Pedro)</strong> O Programador</li>
-        <li><strong>Sra. Enigma - (Emilly)</strong> A Lider do projeto</li>
+        <li><strong>Sra. Enigma - (Emilly)</strong> A Líder do projeto</li>
         <li><strong>Nati - (Guilherme)</strong> O Mestre das Lógicas</li>
         <li><strong>Bolinho - (Samuel)</strong> – O Guardião do Código</li>
         <li><strong>Ruan</strong> – O Arquiteto das Ideias</li>
@@ -62,12 +76,16 @@
       <form>
         <input type="text" placeholder="Seu nome" required />
         <textarea placeholder="Sua mensagem..." required></textarea>
-        <button type="submit">Enviar</button>
+        <button type="submit" class="sound-link">Enviar</button>
       </form>
     </section>
   </main>
 
+  <!-- Instância única do áudio -->
+  <audio id="clickSound" preload="auto" src="estrelanova.mp3"></audio>
+
   <script>
+    // Função para mostrar seção
     function mostrarSecao(id) {
       document.querySelectorAll('.secao').forEach(secao => {
         secao.style.display = 'none';
@@ -77,6 +95,19 @@
 
     // Exibe a primeira por padrão
     mostrarSecao('o-que-e');
+
+    // Som para todos os botões e links com a classe 'sound-link'
+    const soundLinks = document.querySelectorAll('.sound-link');
+    const clickSound = document.getElementById('clickSound');
+
+    soundLinks.forEach(el => {
+      el.addEventListener('click', () => {
+        // Cria uma cópia do áudio para tocar imediatamente
+        const clone = clickSound.cloneNode();
+        clone.volume = 0.5;
+        clone.play().catch(err => console.warn('Falha ao tocar som:', err));
+      });
+    });
   </script>
 </body>
 </html>
