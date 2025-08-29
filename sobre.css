@@ -146,5 +146,72 @@ body {
   .menu-principal li a:hover {
     color: #6c63ff;
   }
-  
-  
+
+/* PERFIL FLUTUANTE */
+.perfil-hover {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background-color: #1e1e2f;
+  padding: 10px 14px;
+  border-radius: 14px;
+  box-shadow: 0 0 14px rgba(0, 0, 0, 0.3);
+  z-index: 999;
+  transition: transform 0.2s ease;
+}
+
+.perfil-hover:hover {
+  transform: scale(1.08);
+}
+
+.avatar-icone {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #00c3ff;
+  object-fit: cover;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.avatar-icone:hover {
+  transform: scale(1.12);
+  box-shadow: 0 0 24px #88d3ce, 0 0 36px #6e45e2;
+}
+
+.perfil-info {
+  position: absolute;
+  top: 80px;
+  right: 0;
+  background-color: #1e1e2f;
+  border: 2px solid #00c3ff;
+  border-radius: 14px;
+  padding: 14px;
+  display: none;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  width: 200px;
+  text-align: left;
+  color: white;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+}
+
+.perfil-hover:hover .perfil-info {
+  display: block;
+}
+
+.perfil-info a {
+  display: block;
+  margin-top: 8px;
+  color: #00c3ff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.perfil-info a:hover {
+  text-decoration: underline;
+}
+
