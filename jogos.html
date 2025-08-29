@@ -91,6 +91,17 @@
 
   <button onclick="ganharXP()" class="xp-btn">Ganhar XP</button>
 
+  <!-- PERFIL FLUTUANTE -->
+  <div class="perfil-hover">
+    <img src="avatar.png" alt="Avatar do usuário" class="avatar-icone">
+    <div class="perfil-info">
+      <strong>Guilherme</strong>
+      <a href="perfil.html">Meu Perfil</a>
+      <a href="config.html">Configurações</a>
+      <a href="sair.html">Sair</a>
+    </div>
+  </div>
+
   <script>
     let xpAtual = 100;
     let xpMaximo = 1000;
@@ -156,5 +167,49 @@
       <p>Use lógica e raciocínio para resolver enigmas com base em pistas. Um jogo cheio de mistério e ideal para quem ama desafios inteligentes.</p>
     </section>
   </main>
+
+  <!-- Áudio do clique -->
+  <audio id="clickSound" src="star.mp3" preload="auto" playsinline></audio>
+
+  <!-- Script do som nos botões/links -->
+  <script>
+    (function() {
+      const clickSound = document.getElementById('clickSound');
+      const links = document.querySelectorAll('a, .game-button, .xp-btn');
+
+      function playClick() {
+        try {
+          clickSound.currentTime = 0;
+          const p = clickSound.play();
+          if (p && typeof p.catch === 'function') {
+            p.catch(err => console.warn('Falha ao tocar som:', err));
+          }
+        } catch(e) {
+          console.warn('Erro ao tocar som:', e);
+        }
+      }
+
+      links.forEach(link => {
+        // Toca som ao pressionar
+        link.addEventListener('pointerdown', playClick);
+
+        // Garante que o som toque antes de navegar
+        link.addEventListener('click', function(e) {
+          const href = this.getAttribute('href');
+          const abreOutraPagina = href && href !== '#';
+
+          if (abreOutraPagina) {
+            e.preventDefault();
+            playClick();
+            setTimeout(() => {
+              window.location.href = href;
+            }, 150); // 150ms para ouvir o som
+          } else {
+            playClick();
+          }
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
