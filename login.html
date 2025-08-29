@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Level Up Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Press Start 2P', monospace;}
+body { background-color: #0f0f1b; color: #fff; height:100vh; display:flex; justify-content:center; align-items:center; overflow:hidden; }
+
+/* ESTRELAS PIXEL ART */
+.stars-bg {
+  position: fixed; top:0; left:0; width:100vw; height:100vh; z-index:0; overflow:hidden;
+}
+.star-pixel {
+  position:absolute; width:2px; height:2px; background:#fff; opacity:0.7;
+  border-radius:50%; animation:twinkle 2s infinite alternate;
+}
+.star-pixel.large { width:3px; height:3px; }
+.star-pixel:nth-child(2n){ background:#88d3ce; opacity:0.6; }
+.star-pixel:nth-child(3n){ background:#6e45e2; opacity:0.5; }
+@keyframes twinkle { 0%{opacity:0.3;} 50%{opacity:1;} 100%{opacity:0.3;} }
+
+/* AURORA BOREAL CAPRICHADA */
+.aurora-layer {
+  position: fixed; top:0; left:-50%; width:200%; height:120%;
+  background: linear-gradient(120deg, rgba(136,211,206,0.3), rgba(110,69,226,0.3), rgba(255,255,255,0.2));
+  filter: blur(60px);
+  transform: skewY(-15deg);
+  z-index:1;
+  animation: auroraMove linear infinite;
+}
+
+/* Três camadas com velocidades diferentes */
+.aurora1 { animation-duration:18s; opacity:0.5; }
+.aurora2 { animation-duration:25s; opacity:0.35; background: linear-gradient(150deg, rgba(255,255,150,0.2), rgba(136,211,206,0.3), rgba(110,69,226,0.2)); filter: blur(80px); }
+.aurora3 { animation-duration:35s; opacity:0.25; background: linear-gradient(160deg, rgba(255,150,255,0.2), rgba(88,211,206,0.25), rgba(110,69,226,0.15)); filter: blur(100px); }
+
+@keyframes auroraMove {
+  0% { transform: translateX(-50%) skewY(-15deg); }
+  50% { transform: translateX(-10%) skewY(-15deg); }
+  100% { transform: translateX(-50%) skewY(-15deg); }
+}
+
+/* FORMULÁRIO CENTRAL */
+.login-container {
+  position: relative; z-index: 2;
+  background: rgba(24,24,46,0.9);
+  border:3px solid #6e45e2; border-radius:16px;
+  box-shadow:0 0 24px #6e45e2,0 0 48px #232347 inset;
+  padding:48px 36px; width:360px;
+  display:flex; flex-direction:column; align-items:center;
+}
+
+/* TÍTULO COM IMAGEM */
+.login-title {
+  display:flex; flex-direction:column; align-items:center; margin-bottom:32px;
+}
+.login-title img { width:64px; height:64px; margin-bottom:12px; }
+.login-title h2 { color:#88d3ce; text-shadow:0 0 8px #6e45e2; font-size:1.5em; text-align:center; }
+
+/* INPUTS E BOTÕES */
+.login-container input {
+  width:100%; padding:14px 12px; margin-bottom:20px; border-radius:8px;
+  border:2px solid #6e45e2; background:rgba(24,24,46,0.5); color:#fff;
+  font-size:0.9em; text-shadow:1px 1px 0 #232347; outline:none;
+  transition:0.3s; box-sizing:border-box;
+}
+.login-container input:focus {
+  border-color:#88d3ce; box-shadow:0 0 12px #88d3ce; background:rgba(24,24,46,0.75);
+}
+.login-container button {
+  width:100%; padding:14px; border-radius:8px; border:2px solid #6e45e2;
+  background-color:#232347; color:#00c3ff; font-family:'Press Start 2P';
+  font-size:0.95em; cursor:pointer; transition:0.2s; text-transform:uppercase;
+  box-shadow:0 0 12px #6e45e2;
+}
+.login-container button:hover {
+  background-color:#6e45e2; color:#0f0f1b; box-shadow:0 0 24px #88d3ce;
+}
+
+/* VISIBILIDADE SUAVE PARA FORMULÁRIOS */
+.form-fields { display:flex; flex-direction:column; width:100%; transition: opacity 0.3s ease; }
+.hidden { opacity:0; pointer-events:none; height:0; margin:0; }
+
+/* RESPONSIVO */
+@media (max-width:400px) { .login-container{ width:90%; padding:36px 24px; } }
+</style>
+</head>
+<body>
+<div class="stars-bg"></div>
+
+<!-- CAMADAS DE AURORA -->
+<div class="aurora-layer aurora1"></div>
+<div class="aurora-layer aurora2"></div>
+<div class="aurora-layer aurora3"></div>
+
+<div class="login-container">
+  <div class="login-title">
+    <img src="logo.png.jpg" alt="Logo do L.U.A">
+    <h2>L.U.A</h2>
+  </div>
+
+  <form id="loginForm">
+    <div id="fullForm" class="form-fields">
+      <input type="text" placeholder="Nome" required>
+      <input type="password" placeholder="Senha" required>
+      <input type="password" placeholder="Confirmar Senha" required>
+    </div>
+    <div id="loginFormFields" class="form-fields hidden">
+      <input type="text" placeholder="Nome" required>
+      <input type="password" placeholder="Senha" required>
+    </div>
+    <button type="submit">Entrar</button>
+  </form>
+
+  <p style="margin-top:12px; cursor:pointer; color:#88d3ce; text-shadow:0 0 4px #6e45e2;" id="toggleForm">Já possui conta? Clique aqui</p>
+</div>
+
+<script>
+// ESTRELAS PIXEL ART
+const starsBg = document.querySelector('.stars-bg');
+for(let i=0;i<120;i++){
+  const star = document.createElement('div');
+  star.className='star-pixel';
+  if(Math.random()>0.8) star.classList.add('large');
+  star.style.top=Math.random()*100+'vh';
+  star.style.left=Math.random()*100+'vw';
+  star.style.animationDelay=(Math.random()*2)+'s';
+  starsBg.appendChild(star);
+}
+
+// TOGGLE FORMULÁRIO
+const toggle = document.getElementById('toggleForm');
+const fullForm = document.getElementById('fullForm');
+const loginFields = document.getElementById('loginFormFields');
+
+toggle.addEventListener('click', ()=>{
+  if(fullForm.classList.contains('hidden')){
+    fullForm.classList.remove('hidden');
+    loginFields.classList.add('hidden');
+    toggle.textContent='Já possui conta? Clique aqui';
+  } else {
+    fullForm.classList.add('hidden');
+    loginFields.classList.remove('hidden');
+    toggle.textContent='Não possui conta? Cadastre-se';
+  }
+});
+</script>
+</body>
+</html>
