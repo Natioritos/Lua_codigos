@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🌌 Sinapse Espacial — Craft Infinito</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    /* ======= Pixel Retro Style ======= */
+    @keyframes pixelGlow {
+      0% { box-shadow: 0 0 5px #ff0000; }
+      25% { box-shadow: 0 0 10px #00ff00; }
+      50% { box-shadow: 0 0 15px #0000ff; }
+      75% { box-shadow: 0 0 10px #ffff00; }
+      100% { box-shadow: 0 0 5px #ff00ff; }
+    }
+    @keyframes pixelPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    @keyframes twinkle {
+      0% { opacity: .25; transform: scale(.9); }
+      100% { opacity: 1; transform: scale(1.1); }
+    }
+    .pixel-art { image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges; }
+    .glitch-effect { animation: pixelGlow .6s infinite; }
+    .pulse-effect { animation: pixelPulse 1s infinite; }
+    .retro-border { border: 4px solid #3b3b3b; box-shadow: inset 0 0 0 2px #fff, inset 0 0 0 6px #3b3b3b; }
+
+    .star { position:absolute; background:#fff; border-radius:50%; animation: twinkle 2.2s infinite alternate; }
+    .pixel-button { position:relative; overflow:hidden; }
+    .pixel-button:active{ top:2px; }
+    .pixel-button:after{
+      content:''; position:absolute; left:0; top:0; width:100%; height:50%; background:rgba(255,255,255,.07);
+    }
+
+    /* Scrollbars sutis */
+    *::-webkit-scrollbar { width: 10px; height: 10px; }
+    *::-webkit-scrollbar-thumb { background: #4b5563; border:2px solid #111827; }
+    *::-webkit-scrollbar-track { background: #111827; }
+
+    /* Chips de elemento */
+    .chip { cursor:pointer; }
+    .chip:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  </style>
+</head>
+
+<body class="bg-black text-white font-mono min-h-screen overflow-x-hidden relative">
+  <!-- Fundo estrelado -->
+  <div id="stars" class="fixed inset-0 overflow-hidden z-0"></div>
+
+  <div class="container mx-auto px-4 py-6 relative z-10">
+    <!-- Header -->
+    <header class="mb-6 text-center retro-border bg-gray-900 p-4">
+      <h1 class="text-3xl md:text-5xl font-extrabold mb-2 text-yellow-400 pixel-art">🌌 SINAPSE ESPACIAL</h1>
+      <p class="text-base md:text-lg text-blue-300">Craft infinito em pixel art retrô — aprendizagem por mecânicas</p>
+      <div class="mt-2">
+        <a href="LUA.html" class="inline-flex items-center gap-2 pixel-button bg-purple-700 hover:bg-purple-800 text-white px-3 py-1 md:px-4 md:py-2 font-bold retro-border text-sm md:text-base">
+          <i class="fa-solid fa-angles-left"></i> Voltar para L.U.A.
+        </a>
+      </div>
+    </header>
+    <div class="flex flex-col lg:flex-row gap-6">
+
+      <!-- Painel Esquerdo — Inventário + Seleção -->
+      <aside class="w-full lg:w-1/4 retro-border bg-gray-900 p-4 h-fit">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-bold mb-2 text-green-400">📦 Inventário (Planeta)</h2>
+          <button id="toggleInv" class="pixel-button bg-gray-800 hover:bg-gray-700 text-white px-3 py-1 font-bold retro-border text-xs">
+            Global
+          </button>
+        </div>
+
+        <div class="mb-2 text-xs text-gray-300">
+          Filtros:
+          <select id="filterSelect" class="bg-gray-800 retro-border py-1 px-2 text-xs">
+            <option value="all">Todos</option>
+            <option value="biológico">Biológicos</option>
+            <option value="rocha">Rochas</option>
+            <option value="líquido">Líquidos</option>
+            <option value="energia">Energia</option>
+            <option value="tecnologia">Tecnologia</option>
+            <option value="cultural">Cultural</option>
+            <option value="construção">Construção</option>
+            <option value="químico">Químico</option>
+          </select>
+        </div>
+
+        <div id="inventory" class="grid grid-cols-4 gap-2"></div>
+
+        <div class="mt-5">
+          <h3 class="text-lg font-bold mb-2 text-purple-400">🔍 Selecionados</h3>
+          <div id="selected" class="flex flex-wrap gap-2 min-h-16 border-2 border-dashed border-gray-600 p-2">
+            <p class="text-gray-500 text-sm">Clique nos itens do inventário para selecionar</p>
+          </div>
+
+          <div class="mt-4 flex justify-between gap-2">
+            <button id="combine" class="pixel-button bg-green-600 hover:bg-green-700 text-white px-4 py-2 font-bold retro-border">
+              🔥 Combinar
+            </button>
+            <button id="clearSel" class="pixel-button bg-red-600 hover:bg-red-700 text-white px-4 py-2 font-bold retro-border">
+              🗑️ Limpar
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Painel Central — Área de Crafting -->
+      <main class="w-full lg:w-2/4 retro-border bg-gray-900 p-4">
+        <h2 class="text-xl font-bold mb-4 text-yellow-400">⚙️ Área de Crafting</h2>
+
+        <div id="result" class="bg-gray-800 p-6 text-center mb-6 min-h-32 flex flex-col justify-center items-center">
+          <div id="resultIcon" class="w-16 h-16 mb-4"></div>
+          <p id="resultText" class="text-lg">Selecione 2 a 6 itens e combine para descobrir!</p>
+        </div>
+
+        <div class="mb-6">
+          <h3 class="text-lg font-bold mb-2 text-blue-400">📜 Histórico</h3>
+          <div id="history" class="bg-gray-800 p-4 h-52 overflow-y-auto text-sm"></div>
+        </div>
+
+        <div class="bg-gray-800 p-4">
+          <h3 class="text-lg font-bold mb-2 text-pink-400">💡 Dica</h3>
+          <p id="hint" class="text-sm">Comece com Fogo + Água, Terra + Água, ou Água + Vento.</p>
+        </div>
+      </main>
+
+      <!-- Painel Direito — Progresso, Planetas, Conquistas -->
+      <aside class="w-full lg:w-1/4 retro-border bg-gray-900 p-4 h-fit">
+        <h2 class="text-xl font-bold mb-4 text-red-400">📊 Progresso</h2>
+
+        <div class="mb-5">
+          <div class="flex justify-between mb-1">
+            <span>XP: <span id="xp">0</span></span>
+            <span id="level">Nível 1</span>
+          </div>
+          <div class="w-full bg-gray-700 h-6 retro-border">
+            <div id="xpBar" class="bg-blue-500 h-full w-0 transition-all duration-500"></div>
+          </div>
+          <div class="text-xs mt-1 text-gray-300">Para o próximo nível: <span id="xpNext">100</span></div>
+        </div>
+
+        <div class="mb-5">
+          <h3 class="text-lg font-bold mb-2 text-purple-400">🌟 Descobertas</h3>
+          <p id="discoveries" class="text-2xl font-bold text-center">0</p>
+        </div>
+
+        <div class="mb-5">
+          <h3 class="text-lg font-bold mb-2 text-green-400">🪐 Planetas</h3>
+          <div id="planets" class="grid grid-cols-2 gap-2"></div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-bold mb-2 text-yellow-400">🏆 Conquistas</h3>
+          <div id="achievements" class="space-y-2"></div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Botão Mapa Galáctico -->
+    <div class="fixed bottom-4 right-4">
+      <button id="galaxyBtn" class="pixel-button bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 font-bold retro-border text-lg">
+        <i class="fas fa-star"></i> Mapa Galáctico
+      </button>
+    </div>
+    <!-- Modal: Mapa Galáctico -->
+    <div id="galaxyModal" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden flex items-center justify-center p-4">
+      <div class="bg-gray-900 retro-border p-6 max-w-5xl w-full max-h-screen overflow-auto">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-2xl md:text-3xl font-bold text-purple-400">🌌 Mapa Galáctico</h2>
+          <button id="closeGalaxy" class="pixel-button bg-red-600 hover:bg-red-700 text-white px-4 py-1 font-bold retro-border">X</button>
+        </div>
+        <div id="galaxyMap" class="w-full h-[500px] bg-gray-800 relative overflow-hidden">
+          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-yellow-400 rounded-full pulse-effect"></div>
+        </div>
+        <p class="mt-3 text-xs text-gray-400">Cada descoberta cria um nó na sua galáxia mental. Clique nos nós para ver o nome.</p>
+      </div>
+    </div>
+
+    <!-- Botão de Som -->
+    <div class="fixed bottom-4 left-4 z-20">
+      <button id="soundBtn" class="pixel-button bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full">
+        <i class="fas fa-volume-up"></i>
+      </button>
+    </div>
+    <!-- ======= SCRIPT DO JOGO ======= -->
+    <script>
+    // ---------- Util -----------
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => document.querySelectorAll(sel);
+
+    // ---------- Referências DOM -----------
+    const starsEl = $('#stars');
+    const invEl = $('#inventory');
+    const selectedEl = $('#selected');
+    const resultEl = $('#result');
+    const resultIcon = $('#resultIcon');
+    const resultText = $('#resultText');
+    const historyEl = $('#history');
+    const hintEl = $('#hint');
+    const xpEl = $('#xp'); const xpBar = $('#xpBar'); const xpNextEl = $('#xpNext'); const levelEl = $('#level');
+    const discoveriesEl = $('#discoveries');
+    const planetsEl = $('#planets');
+    const achievementsEl = $('#achievements');
+    const toggleInvBtn = $('#toggleInv');
+    const filterSelect = $('#filterSelect');
+
+    const combineBtn = $('#combine');
+    const clearSelBtn = $('#clearSel');
+    const galaxyBtn = $('#galaxyBtn');
+    const galaxyModal = $('#galaxyModal'); const closeGalaxy = $('#closeGalaxy'); const galaxyMap = $('#galaxyMap');
+    const soundBtn = $('#soundBtn');
+
+    // ---------- Sons (placeholder via console) -----------
+    const playSound = type => { if (!state.sound) return; console.log('sound:', type); };
+
+    // ---------- Config de PlanetAS (reset e multiplicadores) -----------
+    const PLANETS = [
+      { id: 1, name: 'Terra Primordial', color: 'bg-blue-500', xpMult: 1, minComplex: 2 },
+      { id: 2, name: 'BioGênese',        color: 'bg-green-500', xpMult: 1.2, minComplex: 2 },
+      { id: 3, name: 'AquaMundi',        color: 'bg-cyan-500',  xpMult: 1.4, minComplex: 2 },
+      { id: 4, name: 'GeoForja',         color: 'bg-amber-500', xpMult: 1.6, minComplex: 3 },
+      { id: 5, name: 'TecnoPólis',       color: 'bg-indigo-500',xpMult: 1.8, minComplex: 3 },
+      { id: 6, name: 'Cultura Real',     color: 'bg-pink-500',  xpMult: 2.0, minComplex: 3 },
+      { id: 7, name: 'Energia & Física', color: 'bg-red-500',   xpMult: 2.2, minComplex: 3 },
+      { id: 8, name: 'Cosmos',           color: 'bg-purple-500',xpMult: 2.5, minComplex: 3 },
+      { id: 9, name: 'Prototipia',       color: 'bg-teal-500',  xpMult: 3.0, minComplex: 4 },
+      { id:10, name: 'Singularidade',    color: 'bg-yellow-500',xpMult: 3.5, minComplex: 4 },
+    ];
+
+    // ---------- Estado Global -----------
+    const state = {
+      sound: true,
+      viewGlobal: false,
+      planetIndex: 0, // começa no Planeta 1 (index 0)
+      level: 1,
+      xp: 0,
+      xpNext: 100,
+      selected: [],
+      history: [],
+      // inventários
+      globalInv: new Set(['fire','water','earth','wind']),
+      planetInv: [ // um por planeta
+        new Set(['fire','water','earth','wind']),
+        ...Array(9).fill(0).map(()=> new Set(['fire','water','earth','wind']))
+      ],
+      discovered: new Set(), // global
+      achievements: new Set()
+    };
+
+    // ---------- Conquistas ----------
+    const ACHIEVEMENTS = [
+      { id:'first-discovery', name:'Primeira Descoberta', cond: s=>s.discovered.size>=1, icon:'🌟', desc:'Crie seu primeiro item.' },
+      { id:'ten-discoveries', name:'Curioso', cond: s=>s.discovered.size>=10, icon:'🔎', desc:'10 descobertas únicas.' },
+      { id:'lv-5', name:'Aprendiz Galáctico', cond: s=>s.level>=5, icon:'⭐', desc:'Alcance nível 5.' },
+      { id:'planet-3', name:'Explorador', cond: s=>s.planetIndex>=2, icon:'🪐', desc:'Chegue ao Planeta 3.' },
+      { id:'craft-epic', name:'Mão de Ouro', cond: s=>s.history.some(h=>h.tier==='épico'||h.tier==='lendário'), icon:'🏆', desc:'Crie algo épico ou lendário.' },
+    ];
+
+    // ---------- Cores por nível de item ----------
+    const levelColor = lvl => {
+      const colors = ['#FF5252','#FFD740','#69F0AE','#40C4FF','#B388FF','#FF4081'];
+      return colors[Math.min(lvl-1, colors.length-1)];
+    };
+
+    // ---------- Util arrays/combinações ----------
+    const sortIds = arr => [...arr].sort();
+    const sameCombo = (a,b) => {
+      if (a.length!==b.length) return false;
+      const A = sortIds(a), B = sortIds(b);
+      for (let i=0;i<A.length;i++){ if (A[i]!==B[i]) return false; }
+      return true;
+    };
+
+    // ---------- Estrelas de fundo ----------
+    function buildStars(){
+      const n=120;
+      for(let i=0;i<n;i++){
+        const s=document.createElement('div');
+        s.className='star';
+        const size = Math.random()*2+1;
+        s.style.width=`${size}px`; s.style.height=`${size}px`;
+        s.style.left=`${Math.random()*100}%`; s.style.top=`${Math.random()*100}%`;
+        s.style.animationDelay=`${Math.random()*2}s`;
+        starsEl.appendChild(s);
+      }
+    }
+    // ---------- Banco base de elementos (nome, emoji, tags, planeta mínimo sugerido) ----------
+    // Observação: as receitas completas entram na PARTE 8.
+    const ITEMS = {
+      // base
+      fire:{id:'fire',name:'Fogo',emoji:'🔥',tags:['energia'],lvl:1,planet:1},
+      water:{id:'water',name:'Água',emoji:'💧',tags:['líquido'],lvl:1,planet:1},
+      earth:{id:'earth',name:'Terra',emoji:'🌍',tags:['rocha'],lvl:1,planet:1},
+      wind:{id:'wind',name:'Vento',emoji:'🌬️',tags:['energia'],lvl:1,planet:1},
+
+      // P1 exemplos (demais entram via receitas)
+      steam:{id:'steam',name:'Vapor',emoji:'💨',tags:['gás','processo'],lvl:2,planet:1},
+      mud:{id:'mud',name:'Lama',emoji:'🟫',tags:['orgânico'],lvl:2,planet:1},
+      lava:{id:'lava',name:'Lava',emoji:'🌋',tags:['rocha','quente'],lvl:2,planet:1},
+      dust:{id:'dust',name:'Poeira',emoji:'💨',tags:['rocha'],lvl:2,planet:1},
+      storm:{id:'storm',name:'Tempestade',emoji:'⛈️',tags:['clima','energia'],lvl:2,planet:1},
+      rock:{id:'rock',name:'Rocha',emoji:'🪨',tags:['rocha'],lvl:3,planet:1},
+      cloud:{id:'cloud',name:'Nuvem',emoji:'☁️',tags:['clima'],lvl:3,planet:1},
+      rain:{id:'rain',name:'Chuva',emoji:'🌧️',tags:['clima','líquido'],lvl:3,planet:1},
+      mountain:{id:'mountain',name:'Montanha',emoji:'⛰️',tags:['rocha'],lvl:3,planet:1},
+      river:{id:'river',name:'Rio',emoji:'🌊',tags:['líquido','geografia'],lvl:3,planet:1},
+
+      // marcadores genéricos para receitas futuras
+      plant:{id:'plant',name:'Planta',emoji:'🌱',tags:['biológico'],lvl:2,planet:2},
+      bacteria:{id:'bacteria',name:'Bactéria',emoji:'🦠',tags:['biológico'],lvl:2,planet:2},
+      metal:{id:'metal',name:'Metal',emoji:'🔩',tags:['tecnologia','construção'],lvl:3,planet:4},
+      glass:{id:'glass',name:'Vidro',emoji:'🪟',tags:['construção'],lvl:2,planet:1}
+    };
+
+    // ---------- UI: Planetas ----------
+    function renderPlanets(){
+      planetsEl.innerHTML='';
+      PLANETS.forEach((p,idx)=>{
+        const card=document.createElement('div');
+        const unlocked = state.level >= (idx*2+1) || idx===0; // liberação progressiva
+        card.className=`${unlocked?'':'opacity-40'} bg-gray-800 p-2 text-center retro-border cursor-pointer`;
+        card.innerHTML=`
+          <div class="w-12 h-12 mx-auto mb-1 ${p.color} rounded-full"></div>
+          <p class="text-[11px] leading-3">${p.name}</p>`;
+        card.addEventListener('click',()=>{
+          if(!unlocked) { notify('Planeta bloqueado. Suba de nível!'); playSound('error'); return; }
+          if(state.planetIndex!==idx){
+            state.planetIndex=idx;
+            // reseta inventário do planeta (mantém 4 básicos)
+            if(state.planetInv[idx].size===4){ /* já base */ }
+            notify(`🪐 Você viajou para ${p.name}!`);
+            playSound('combine');
+            renderAll();
+          }
+        });
+        planetsEl.appendChild(card);
+      });
+    }
+
+    // ---------- UI: Inventários ----------
+    function currentInv(){ return state.viewGlobal ? state.globalInv : state.planetInv[state.planetIndex]; }
+
+    function renderInventory(){
+      invEl.innerHTML='';
+      const inv = currentInv();
+      const filter = filterSelect.value;
+      [...inv].forEach(id=>{
+        const it = ITEMS[id] || {id, name:id, emoji:'❓', tags:[], lvl:1};
+        if (filter!=='all' && !(it.tags||[]).includes(filter)) return;
+
+        const node=document.createElement('div');
+        node.className='chip retro-border bg-gray-800 p-2 text-center transition-all';
+        node.title=it.name;
+        node.innerHTML=`
+          <div class="text-2xl mb-1">${it.emoji||'❔'}</div>
+          <div class="text-[10px]">${it.name}</div>`;
+        node.addEventListener('click',()=>toggleSelect(it.id));
+        invEl.appendChild(node);
+      });
+    }
+
+    function renderSelected(){
+      selectedEl.innerHTML='';
+      if(state.selected.length===0){
+        selectedEl.innerHTML='<p class="text-gray-500 text-sm">Clique nos itens do inventário para selecionar</p>';
+        return;
+      }
+      state.selected.forEach(id=>{
+        const it = ITEMS[id]||{id, name:id, emoji:'❓'};
+        const chip=document.createElement('div');
+        chip.className='retro-border bg-gray-800 p-2 text-center';
+        chip.innerHTML=`<div class="text-xl">${it.emoji}</div><div class="text-[10px]">${it.name}</div>`;
+        chip.addEventListener('click',()=>toggleSelect(id));
+        selectedEl.appendChild(chip);
+      });
+    }
+
+    function renderHistory(){
+      historyEl.innerHTML='';
+      state.history.slice(0,40).forEach(h=>{
+        const row=document.createElement('div');
+        row.className='mb-2 pb-2 border-b border-gray-700';
+        if(h.type==='discovery'){
+          const it = ITEMS[h.id]||{name:h.id,emoji:'❔'};
+          row.innerHTML=`
+            <div class="flex items-center gap-2">
+              <div class="text-xl">${it.emoji}</div>
+              <div>
+                <div>[${h.time}] ${h.msg}</div>
+                <div class="text-xs text-blue-400">+${h.xp} XP (${h.tier})</div>
+              </div>
+            </div>`;
+        }else{
+          row.innerHTML=`<div class="text-yellow-400">[${h.time}] ${h.msg}</div>`;
+        }
+        historyEl.appendChild(row);
+      });
+    }
+
+    function renderProgress(){
+      xpEl.textContent = state.xp;
+      xpNextEl.textContent = state.xpNext;
+      levelEl.textContent = `Nível ${state.level}`;
+      const pct = Math.min(100, Math.floor((state.xp/state.xpNext)*100));
+      xpBar.style.width = pct+'%';
+      discoveriesEl.textContent = state.discovered.size;
+    }
+
+    function renderAchievements(){
+      achievementsEl.innerHTML='';
+      ACHIEVEMENTS.forEach(a=>{
+        const unlocked = state.achievements.has(a.id);
+        const row=document.createElement('div');
+        row.className=`bg-gray-800 p-2 text-sm retro-border ${unlocked?'':'opacity-50'}`;
+        row.innerHTML=`<span class="mr-2">${a.icon}</span> ${a.name} <span class="text-xs text-gray-400">— ${a.desc}</span>`;
+        achievementsEl.appendChild(row);
+      });
+    }
+
+    function renderAll(){ renderPlanets(); renderInventory(); renderSelected(); renderHistory(); renderProgress(); renderAchievements(); updateHint(); buildGalaxy(); }
+    // ---------- Seleção ----------
+    function toggleSelect(id){
+      const i = state.selected.indexOf(id);
+      if(i===-1) state.selected.push(id); else state.selected.splice(i,1);
+      playSound('select');
+      renderSelected(); updateHint();
+    }
+
+    // ---------- Dica dinâmica ----------
+    function updateHint(){
+      if(state.selected.length===0){ hintEl.textContent='Dica: Fogo + Água = Vapor, Terra + Água = Lama, Água + Vento = Tempestade.'; return; }
+      const names = state.selected.map(id => (ITEMS[id]?.name||id).toLowerCase());
+      hintEl.textContent = `Tentando: ${names.join(' + ')}. Combine 2–6 itens.`;
+    }
+
+    // ---------- Notificação interna ----------
+    function notify(msg){
+      const now = new Date().toLocaleTimeString();
+      state.history.unshift({type:'msg', time: now, msg});
+      renderHistory();
+    }
+
+    // ---------- XP e Level ----------
+    function addXP(base, tier='comum'){
+      // tier multipliers
+      const mult = {comum:1, incomum:1.5, raro:2.5, épico:5, lendário:10}[tier]||1;
+      const planetMult = PLANETS[state.planetIndex].xpMult;
+      const total = Math.floor(base*mult*planetMult);
+      state.xp += total;
+      // level up
+      while(state.xp >= state.xpNext){
+        state.xp -= state.xpNext;
+        state.level++;
+        state.xpNext = Math.floor(state.xpNext * 1.5);
+        notify(`⭐ Nível ${state.level} alcançado!`);
+        playSound('levelup');
+      }
+      renderProgress();
+      return total;
+    }
+
+    // ---------- Checar conquistas ----------
+    function checkAchievements(){
+      ACHIEVEMENTS.forEach(a=>{
+        if(!state.achievements.has(a.id) && a.cond(state)){
+          state.achievements.add(a.id);
+          notify(`🏆 Conquista desbloqueada: ${a.name}!`);
+          playSound('discovery');
+          renderAchievements();
+        }
+      });
+    }
+
+    // ---------- Combinar ----------
+    function combine(){
+      if(state.selected.length<2){ setResult(null,'Selecione pelo menos 2 itens.'); playSound('error'); return; }
+      // Monta a lista possível de receitas válidas (parte 8 define RECIPES)
+      const sel = sortIds(state.selected);
+      const found = findRecipe(sel);
+      if(!found){
+        setResult(null,'Combinação inválida!');
+        resultEl.classList.add('glitch-effect');
+        setTimeout(()=>resultEl.classList.remove('glitch-effect'),800);
+        playSound('error');
+        state.selected = [];
+        renderSelected(); updateHint();
+        return;
+      }
+
+      const {output, tier, xpBase, level} = found;
+      const it = ITEMS[output] || {id:output, name:output, emoji:'❔', lvl:level||1};
+
+      // adiciona aos inventários
+      const inv = currentInv();
+      const wasNewGlobal = !state.globalInv.has(output);
+      const wasNewLocal  = !inv.has(output);
+
+      state.globalInv.add(output);
+      inv.add(output);
+      state.discovered.add(output);
+
+      const gained = addXP(xpBase, tier);
+      const now = new Date().toLocaleTimeString();
+      state.history.unshift({type:'discovery', time:now, id:output, msg:`Você criou ${it.name}!`, xp:gained, tier});
+      setResult(output, `Você criou ${it.name}! +${gained} XP`);
+      playSound(wasNewGlobal?'discovery':'combine');
+      buildGalaxy();
+      checkAchievements();
+
+      state.selected = [];
+      renderInventory(); renderSelected(); renderProgress(); renderHistory();
+      updateHint();
+    }
+
+    function setResult(id, msg){
+      resultText.textContent = msg;
+      if(id){
+        const it = ITEMS[id] || {emoji:'❔'};
+        resultIcon.innerHTML = `<div class="text-5xl" title="${it.name}">${it.emoji}</div>`;
+        resultEl.classList.add('pulse-effect');
+        setTimeout(()=>resultEl.classList.remove('pulse-effect'),900);
+      }else{
+        resultIcon.innerHTML = '';
+      }
+    }
+
+    // ---------- Eventos ----------
+    combineBtn.addEventListener('click', combine);
+    clearSelBtn.addEventListener('click', ()=>{ state.selected=[]; renderSelected(); updateHint(); playSound('clear'); });
+    toggleInvBtn.addEventListener('click', ()=>{
+      state.viewGlobal = !state.viewGlobal;
+      toggleInvBtn.textContent = state.viewGlobal ? 'Planeta' : 'Global';
+      renderInventory();
+    });
+    filterSelect.addEventListener('change', renderInventory);
+    galaxyBtn.addEventListener('click', ()=> galaxyModal.classList.remove('hidden'));
+    closeGalaxy.addEventListener('click', ()=> galaxyModal.classList.add('hidden'));
+    soundBtn.addEventListener('click', ()=>{
+      state.sound = !state.sound;
+      soundBtn.innerHTML = state.sound ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+      soundBtn.className = state.sound ? 'pixel-button bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full' : 'pixel-button bg-gray-600 hover:bg-gray-700 text-white p-3 rounded-full';
+    });
+    // ---------- Mapa Galáctico ----------
+    function buildGalaxy(){
+      galaxyMap.innerHTML='';
+      const center=document.createElement('div');
+      center.className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-yellow-400 rounded-full pulse-effect';
+      galaxyMap.appendChild(center);
+
+      const list=[...state.discovered];
+      list.forEach((id,idx)=>{
+        const it=ITEMS[id]||{name:id, emoji:'❔', lvl:1};
+        const angle = (idx / Math.max(1,list.length)) * Math.PI*2;
+        const dist = 100 + idx*6;
+        const x = 50 + Math.cos(angle)*dist/2;
+        const y = 50 + Math.sin(angle)*dist/2;
+
+        const node=document.createElement('div');
+        node.className='absolute w-6 h-6 rounded-full flex items-center justify-center cursor-pointer';
+        node.style.left = `${x}%`; node.style.top = `${y}%`;
+        node.style.background = levelColor(it.lvl||1);
+        node.innerHTML = `<span class="text-[12px]">${it.emoji}</span>`;
+        node.title = it.name;
+
+        // linhas
+        const line=document.createElement('div');
+        line.className='absolute bg-gray-600';
+        line.style.left='50%'; line.style.top='50%';
+        line.style.width= `${dist/2}%`; line.style.height='1px';
+        line.style.transformOrigin='0 0';
+        line.style.transform = `rotate(${angle}rad)`;
+
+        galaxyMap.appendChild(line);
+        galaxyMap.appendChild(node);
+      });
+    }
+
+    // ---------- Inicialização ----------
+    function init(){
+      buildStars();
+      renderAll();
+      notify('Bem-vindo ao Sinapse Espacial! Crie, explore e aprenda.');
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+    // ---------- RECEITAS (planet-to-planet) ----------
+    // Cada entrada: { out:'id', name:'Nome', emoji:'', tags:[], lvl:n, planet:n, tier:'comum|incomum|raro|épico|lendário', xp:base, recipe:[ids...] }
+    // IMPORTANTe: receitas são ORDEM-INSENSITIVA e aceitam duplicados (ex.: ['water','water']).
+
+    const RECIPES = [
+      // ===== PLANETA 1 — TERRA PRIMORDIAL =====
+      {out:'steam',name:'Vapor',emoji:'💨',tags:['gás','processo'],lvl:2,planet:1,tier:'comum',xp:10,recipe:['fire','water']},
+      {out:'mud',name:'Lama',emoji:'🟫',tags:['orgânico'],lvl:2,planet:1,tier:'comum',xp:10,recipe:['earth','water']},
+      {out:'dust',name:'Poeira',emoji:'💨',tags:['rocha'],lvl:2,planet:1,tier:'comum',xp:10,recipe:['earth','wind']},
+      {out:'storm',name:'Tempestade',emoji:'⛈️',tags:['clima','energia'],lvl:2,planet:1,tier:'incomum',xp:20,recipe:['water','wind']},
+      {out:'lava',name:'Lava',emoji:'🌋',tags:['rocha','quente'],lvl:2,planet:1,tier:'incomum',xp:20,recipe:['fire','earth']},
+      {out:'rock',name:'Rocha',emoji:'🪨',tags:['rocha'],lvl:3,planet:1,tier:'incomum',xp:25,recipe:['lava','water']},
+      {out:'cloud',name:'Nuvem',emoji:'☁️',tags:['clima'],lvl:3,planet:1,tier:'comum',xp:10,recipe:['steam','wind']},
+      {out:'rain',name:'Chuva',emoji:'🌧️',tags:['clima','líquido'],lvl:3,planet:1,tier:'comum',xp:10,recipe:['cloud','water']},
+      {out:'mountain',name:'Montanha',emoji:'⛰️',tags:['rocha'],lvl:3,planet:1,tier:'raro',xp:30,recipe:['rock','wind']},
+      {out:'river',name:'Rio',emoji:'🌊',tags:['geografia','líquido'],lvl:3,planet:1,tier:'incomum',xp:25,recipe:['mountain','water']},
+      {out:'sand',name:'Areia',emoji:'🏜️',tags:['rocha'],lvl:2,planet:1,tier:'comum',xp:10,recipe:['rock','wind','wind']},
+      {out:'glass',name:'Vidro',emoji:'🪟',tags:['construção'],lvl:2,planet:1,tier:'incomum',xp:25,recipe:['sand','fire']},
+      {out:'ice',name:'Gelo',emoji:'🧊',tags:['sólido','líquido'],lvl:2,planet:1,tier:'comum',xp:10,recipe:['water','wind','wind']},
+      {out:'basalt',name:'Basalto',emoji:'⬛',tags:['rocha'],lvl:3,planet:1,tier:'incomum',xp:25,recipe:['lava','ice']},
+      {out:'granite',name:'Granito',emoji:'🪨',tags:['rocha'],lvl:3,planet:1,tier:'raro',xp:40,recipe:['rock','rock','time'],},
+
+      // ===== PLANETA 2 — BIOGÊNESE =====
+      {out:'sunlight',name:'Luz Solar',emoji:'☀️',tags:['energia'],lvl:2,planet:2,tier:'comum',xp:10,recipe:['fire','wind']},
+      {out:'fertile_soil',name:'Solo Fértil',emoji:'🟫',tags:['orgânico'],lvl:2,planet:2,tier:'incomum',xp:20,recipe:['mud','time']},
+      {out:'plant',name:'Planta',emoji:'🌱',tags:['biológico'],lvl:2,planet:2,tier:'incomum',xp:20,recipe:['water','earth','sunlight']},
+      {out:'photosynthesis',name:'Fotossíntese',emoji:'🌿',tags:['processo','biológico'],lvl:2,planet:2,tier:'incomum',xp:20,recipe:['plant','sunlight']},
+      {out:'glucose',name:'Glicose',emoji:'🍬',tags:['químico'],lvl:2,planet:2,tier:'incomum',xp:20,recipe:['photosynthesis','water']},
+      {out:'microbe',name:'Microrganismo',emoji:'🧫',tags:['biológico'],lvl:2,planet:2,tier:'incomum',xp:20,recipe:['water','fertile_soil']},
+      {out:'bacteria',name:'Bactéria',emoji:'🦠',tags:['biológico'],lvl:2,planet:2,tier:'incomum',xp:25,recipe:['microbe','mutation']},
+      {out:'fungus',name:'Fungo',emoji:'🍄',tags:['biológico'],lvl:2,planet:2,tier:'incomum',xp:25,recipe:['microbe','decomposition']},
+      {out:'fish',name:'Peixe',emoji:'🐟',tags:['biológico'],lvl:3,planet:2,tier:'incomum',xp:25,recipe:['plant','water','time']},
+      {out:'amphibian',name:'Anfíbio',emoji:'🐸',tags:['biológico'],lvl:3,planet:2,tier:'raro',xp:40,recipe:['fish','earth','time']},
+      {out:'reptile',name:'Réptil',emoji:'🦎',tags:['biológico'],lvl:3,planet:2,tier:'raro',xp:40,recipe:['amphibian','fire','time']},
+      {out:'bird',name:'Ave',emoji:'🐦',tags:['biológico'],lvl:3,planet:2,tier:'raro',xp:40,recipe:['reptile','wind','time']},
+      {out:'mammal',name:'Mamífero',emoji:'🐻',tags:['biológico'],lvl:3,planet:2,tier:'raro',xp:40,recipe:['reptile','ice','time']},
+      {out:'tool',name:'Ferramenta',emoji:'🛠️',tags:['construção','tecnologia'],lvl:3,planet:4,tier:'incomum',xp:25,recipe:['metal','forge']},
+      {out:'human',name:'Humano',emoji:'🧑',tags:['biológico'],lvl:4,planet:2,tier:'épico',xp:150,recipe:['mammal','tool','time']},
+      {out:'sex_reproduction',name:'Reprodução (Sexo)',emoji:'💞',tags:['conceito','biológico'],lvl:4,planet:2,tier:'raro',xp:60,recipe:['biology','man','woman']},
+
+      // ===== PLANETA 3 — AQUAMUNDI =====
+      {out:'salt',name:'Sal',emoji:'🧂',tags:['químico'],lvl:2,planet:3,tier:'incomum',xp:20,recipe:['water','evaporation','sand']},
+      {out:'sea',name:'Mar',emoji:'🌊',tags:['geografia'],lvl:2,planet:3,tier:'incomum',xp:20,recipe:['water','salt']},
+      {out:'current',name:'Corrente Marinha',emoji:'🔄',tags:['processo'],lvl:2,planet:3,tier:'incomum',xp:20,recipe:['sea','wind']},
+      {out:'beach',name:'Praia',emoji:'🏖️',tags:['geografia'],lvl:2,planet:3,tier:'incomum',xp:20,recipe:['sea','sand','current']},
+      {out:'plankton',name:'Plâncton',emoji:'🧪',tags:['biológico'],lvl:2,planet:3,tier:'incomum',xp:20,recipe:['sea','microbe']},
+      {out:'algae',name:'Alga',emoji:'🪸',tags:['biológico'],lvl:2,planet:3,tier:'incomum',xp:20,recipe:['plant','sea']},
+      {out:'oyster',name:'Ostra',emoji:'🦪',tags:['biológico'],lvl:3,planet:3,tier:'incomum',xp:25,recipe:['sea','sedimentation','time']},
+      {out:'pearl',name:'Pérola',emoji:'🔮',tags:['luxo','material'],lvl:3,planet:3,tier:'raro',xp:60,recipe:['oyster','time']},
+      {out:'reef',name:'Recife de Coral',emoji:'🪸',tags:['biológico'],lvl:3,planet:3,tier:'raro',xp:60,recipe:['sea','time','plant']},
+      {out:'mangrove',name:'Mangue',emoji:'🌿',tags:['biológico'],lvl:3,planet:3,tier:'raro',xp:60,recipe:['sea','plant','sedimentation']},
+      {out:'tropical_storm',name:'Tempestade Tropical',emoji:'🌀',tags:['clima'],lvl:3,planet:3,tier:'raro',xp:60,recipe:['sea','storm']},
+
+      // ===== PLANETA 4 — GEOFORJA =====
+      {out:'mining',name:'Mineração',emoji:'⛏️',tags:['processo'],lvl:3,planet:4,tier:'comum',xp:10,recipe:['rock','tool']},
+      {out:'iron_ore',name:'Minério de Ferro',emoji:'🟥',tags:['minério'],lvl:3,planet:4,tier:'incomum',xp:25,recipe:['earth','mining']},
+      {out:'copper_ore',name:'Minério de Cobre',emoji:'🟧',tags:['minério'],lvl:3,planet:4,tier:'incomum',xp:25,recipe:['earth','mining']},
+      {out:'tin_ore',name:'Minério de Estanho',emoji:'⬜',tags:['minério'],lvl:3,planet:4,tier:'incomum',xp:25,recipe:['earth','mining']},
+      {out:'forge',name:'Forja',emoji:'🔥',tags:['processo'],lvl:3,planet:4,tier:'incomum',xp:25,recipe:['fire','tool']},
+      {out:'iron',name:'Ferro',emoji:'🔩',tags:['metal'],lvl:3,planet:4,tier:'raro',xp:40,recipe:['iron_ore','forge','fire']},
+      {out:'copper',name:'Cobre',emoji:'🧲',tags:['metal'],lvl:3,planet:4,tier:'raro',xp:40,recipe:['copper_ore','forge','fire']},
+      {out:'tin',name:'Estanho',emoji:'🔘',tags:['metal'],lvl:3,planet:4,tier:'raro',xp:40,recipe:['tin_ore','forge','fire']},
+      {out:'bronze',name:'Bronze',emoji:'🟤',tags:['liga'],lvl:3,planet:4,tier:'raro',xp:60,recipe:['copper','tin']},
+      {out:'steel',name:'Aço',emoji:'⚙️',tags:['liga'],lvl:4,planet:4,tier:'raro',xp:60,recipe:['iron','coal','alloy']},
+      {out:'clay',name:'Argila',emoji:'🧱',tags:['cerâmica'],lvl:2,planet:4,tier:'incomum',xp:20,recipe:['earth','water','pressure']},
+      {out:'ceramic',name:'Cerâmica',emoji:'🏺',tags:['cerâmica','construção'],lvl:3,planet:4,tier:'incomum',xp:25,recipe:['clay','sinter']},
+      {out:'brick',name:'Tijolo',emoji:'🧱',tags:['construção'],lvl:3,planet:4,tier:'incomum',xp:25,recipe:['clay','forge']},
+      {out:'cement',name:'Cimento',emoji:'🪨',tags:['construção'],lvl:4,planet:4,tier:'raro',xp:60,recipe:['limestone','forge','grind']},
+      {out:'concrete',name:'Concreto',emoji:'🧱',tags:['construção'],lvl:4,planet:4,tier:'incomum',xp:25,recipe:['cement','sand','water']},
+      {out:'lens',name:'Lente',emoji:'🔍',tags:['óptica'],lvl:4,planet:4,tier:'raro',xp:60,recipe:['glass','polish']},
+
+      // ===== PLANETA 5 — TECNOPÓLIS (real) =====
+      {out:'wire',name:'Fio',emoji:'🧵',tags:['eletrônico'],lvl:3,planet:5,tier:'incomum',xp:25,recipe:['copper','stretch']},
+      {out:'pcb',name:'Placa PCB',emoji:'🟩',tags:['eletrônico'],lvl:4,planet:5,tier:'raro',xp:60,recipe:['fiber','copper','circuit']},
+      {out:'battery',name:'Bateria',emoji:'🔋',tags:['energia'],lvl:4,planet:5,tier:'raro',xp:60,recipe:['chemistry','electricity']},
+      {out:'computer',name:'Computador',emoji:'💻',tags:['tecnologia'],lvl:4,planet:5,tier:'raro',xp:60,recipe:['pcb','power']},
+      {out:'os',name:'Sistema Operacional',emoji:'🧠',tags:['software'],lvl:4,planet:5,tier:'raro',xp:60,recipe:['computer','programming']},
+      {out:'html',name:'HTML',emoji:'📄',tags:['web','software'],lvl:3,planet:5,tier:'incomum',xp:25,recipe:['markup','web']},
+      {out:'css',name:'CSS',emoji:'🎨',tags:['web','software'],lvl:3,planet:5,tier:'incomum',xp:25,recipe:['style','web']},
+      {out:'javascript',name:'JavaScript',emoji:'🟨',tags:['web','software'],lvl:4,planet:5,tier:'raro',xp:60,recipe:['code','web']},
+      {out:'website',name:'Site',emoji:'🕸️',tags:['web'],lvl:4,planet:5,tier:'raro',xp:60,recipe:['html','css','javascript']},
+      {out:'network',name:'Rede',emoji:'🌐',tags:['infra'],lvl:4,planet:5,tier:'incomum',xp:25,recipe:['computer','computer']},
+      {out:'internet',name:'Internet',emoji:'🛜',tags:['infra'],lvl:5,planet:5,tier:'épico',xp:150,recipe:['network','routing','scale']},
+      {out:'social',name:'Rede Social',emoji:'👥',tags:['serviço','cultural'],lvl:5,planet:5,tier:'raro',xp:60,recipe:['website','users','internet']},
+      {out:'gamepad',name:'Controle de Videogame',emoji:'🎮',tags:['hardware'],lvl:4,planet:5,tier:'raro',xp:60,recipe:['circuit','buttons','ergonomics']},
+      {out:'console',name:'Console de Videogame',emoji:'🕹️',tags:['hardware'],lvl:5,planet:5,tier:'épico',xp:150,recipe:['pcb','media','gamepad']},
+      {out:'laptop',name:'Notebook',emoji:'💼',tags:['hardware'],lvl:4,planet:5,tier:'raro',xp:60,recipe:['computer','portability']},
+      {out:'cloud_comp',name:'Computação em Nuvem',emoji:'☁️',tags:['serviço'],lvl:5,planet:5,tier:'raro',xp:60,recipe:['internet','server']},
+      {out:'streaming',name:'Streaming',emoji:'📺',tags:['serviço','cultural'],lvl:5,planet:5,tier:'raro',xp:60,recipe:['video','internet']},
+
+      // ===== PLANETA 6 — CULTURA REAL =====
+      {out:'book',name:'Livro',emoji:'📖',tags:['cultural'],lvl:3,planet:6,tier:'incomum',xp:25,recipe:['text','publishing']},
+      {out:'magazine',name:'Revista',emoji:'📰',tags:['cultural'],lvl:3,planet:6,tier:'raro',xp:60,recipe:['text','image','layout']},
+      {out:'newspaper',name:'Jornal',emoji:'🗞️',tags:['cultural'],lvl:3,planet:6,tier:'raro',xp:60,recipe:['text','publishing','periodicity']},
+      {out:'music',name:'Música',emoji:'🎵',tags:['cultural'],lvl:3,planet:6,tier:'incomum',xp:25,recipe:['sound','record']},
+      {out:'album',name:'Álbum',emoji:'💿',tags:['cultural'],lvl:3,planet:6,tier:'incomum',xp:25,recipe:['music','production']},
+      {out:'film',name:'Filme',emoji:'🎬',tags:['cultural'],lvl:4,planet:6,tier:'raro',xp:60,recipe:['video','script','edit']},
+      {out:'series',name:'Série',emoji:'📺',tags:['cultural'],lvl:5,planet:6,tier:'épico',xp:150,recipe:['film','episodes','streaming']},
+      {out:'anime',name:'Anime',emoji:'🧧',tags:['cultural'],lvl:5,planet:6,tier:'épico',xp:150,recipe:['japan','manga','animation']},
+      {out:'comics',name:'Quadrinhos',emoji:'🗯️',tags:['cultural'],lvl:4,planet:6,tier:'raro',xp:60,recipe:['image','text','publishing']},
+      {out:'theatre',name:'Teatro',emoji:'🎭',tags:['cultural'],lvl:4,planet:6,tier:'raro',xp:60,recipe:['script','actors','stage']},
+      {out:'podcast',name:'Podcast',emoji:'🎙️',tags:['cultural'],lvl:4,planet:6,tier:'raro',xp:60,recipe:['audio','record','distribution']},
+      {out:'youtube',name:'Canal no YouTube',emoji:'▶️',tags:['cultural'],lvl:4,planet:6,tier:'raro',xp:60,recipe:['video','platform','audience']},
+      {out:'museum',name:'Museu',emoji:'🏛️',tags:['cultural'],lvl:5,planet:6,tier:'épico',xp:150,recipe:['collection','curation','space']},
+      {out:'library',name:'Biblioteca',emoji:'🏫',tags:['cultural'],lvl:4,planet:6,tier:'raro',xp:60,recipe:['book','organization','access']},
+      {out:'studio_anim',name:'Estúdio de Animação',emoji:'🎞️',tags:['cultural'],lvl:5,planet:6,tier:'épico',xp:150,recipe:['animation','production','team']},
+
+      // ===== PLANETA 7 — ENERGIA & FÍSICA =====
+      {out:'electricity',name:'Eletricidade',emoji:'⚡',tags:['energia'],lvl:3,planet:7,tier:'incomum',xp:25,recipe:['movement','friction']},
+      {out:'em',name:'Eletromagnetismo',emoji:'🧲',tags:['físico'],lvl:4,planet:7,tier:'raro',xp:60,recipe:['electricity','field']},
+      {out:'generator',name:'Gerador',emoji:'🔄',tags:['dispositivo'],lvl:4,planet:7,tier:'raro',xp:60,recipe:['movement','magnet','induction']},
+      {out:'motor',name:'Motor Elétrico',emoji:'🔁',tags:['dispositivo'],lvl:4,planet:7,tier:'raro',xp:60,recipe:['electricity','magnet','coil']},
+      {out:'solar_panel',name:'Painel Solar',emoji:'🔆',tags:['energia'],lvl:4,planet:7,tier:'raro',xp:60,recipe:['silicon','sunlight','assembly']},
+      {out:'wind_turbine',name:'Turbina Eólica',emoji:'🌀',tags:['energia'],lvl:4,planet:7,tier:'raro',xp:60,recipe:['wind','propeller','generator']},
+      {out:'hydro',name:'Hidrelétrica',emoji:'💧⚙️',tags:['energia'],lvl:5,planet:7,tier:'épico',xp:150,recipe:['water','drop','turbine']},
+      {out:'nuclear_fission',name:'Fissão Nuclear',emoji:'☢️',tags:['energia'],lvl:5,planet:7,tier:'épico',xp:150,recipe:['uranium','control','reaction']},
+      {out:'nuclear_plant',name:'Usina Nuclear',emoji:'🏭☢️',tags:['energia'],lvl:5,planet:7,tier:'lendário',xp:400,recipe:['nuclear_fission','turbine','cooling']},
+      {out:'superconductor',name:'Supercondutor (conceito)',emoji:'🧊🧲',tags:['físico'],lvl:5,planet:7,tier:'épico',xp:150,recipe:['cold','material','field']},
+      {out:'transformer',name:'Transformador',emoji:'🔌',tags:['dispositivo'],lvl:4,planet:7,tier:'raro',xp:60,recipe:['coil','coil','induction']},
+      {out:'grid',name:'Rede Elétrica',emoji:'🕸️⚡',tags:['infra'],lvl:5,planet:7,tier:'épico',xp:150,recipe:['generator','lines','substations']},
+
+      // ===== PLANETA 8 — COSMOS =====
+      {out:'nebula',name:'Nebulosa',emoji:'🌫️',tags:['astronômico'],lvl:4,planet:8,tier:'raro',xp:60,recipe:['gas','dust','gravity']},
+      {out:'star',name:'Estrela',emoji:'🌟',tags:['astronômico'],lvl:5,planet:8,tier:'épico',xp:150,recipe:['gas','gravity','time']},
+      {out:'planet',name:'Planeta',emoji:'🪐',tags:['astronômico'],lvl:4,planet:8,tier:'raro',xp:60,recipe:['dust','gravity','time']},
+      {out:'moon',name:'Lua',emoji:'🌕',tags:['astronômico'],lvl:4,planet:8,tier:'raro',xp:60,recipe:['planet','dust','gravity']},
+      {out:'blackhole',name:'Buraco Negro',emoji:'🕳️',tags:['astronômico'],lvl:5,planet:8,tier:'épico',xp:150,recipe:['star','collapse']},
+      {out:'comet',name:'Cometa',emoji:'☄️',tags:['astronômico'],lvl:4,planet:8,tier:'raro',xp:60,recipe:['ice','dust','orbit']},
+      {out:'asteroid',name:'Asteroide',emoji:'🪨',tags:['astronômico'],lvl:3,planet:8,tier:'incomum',xp:25,recipe:['rock','orbit']},
+      {out:'rocket',name:'Foguete',emoji:'🚀',tags:['astronáutica'],lvl:5,planet:8,tier:'épico',xp:150,recipe:['metal','fuel','electronics']},
+      {out:'satellite',name:'Satélite',emoji:'🛰️',tags:['astronáutica'],lvl:4,planet:8,tier:'raro',xp:60,recipe:['metal','pcb','power']},
+      {out:'space_station',name:'Estação Espacial',emoji:'🏗️🛰️',tags:['astronáutica'],lvl:6,planet:8,tier:'lendário',xp:400,recipe:['satellite','dock','modules']},
+      {out:'space_telescope',name:'Telescópio Espacial',emoji:'🔭🛰️',tags:['astronáutica'],lvl:6,planet:8,tier:'lendário',xp:400,recipe:['lens','satellite','stabilization']},
+
+      // ===== PLANETA 9 — PROTOTIPIA (fictícios úteis) =====
+      {out:'photo_ink',name:'Tinta Fotossintética',emoji:'🖌️☀️',tags:['materiais'],lvl:5,planet:9,tier:'épico',xp:150,recipe:['pigment','photosynthesis','polymer']},
+      {out:'self_irrig_seed',name:'Semente Autoirrigante',emoji:'🌰💧',tags:['agro'],lvl:5,planet:9,tier:'épico',xp:150,recipe:['seed','microreservoir','humidity_sensor']},
+      {out:'self_heal_cloth',name:'Tecido Autorregenerativo',emoji:'🧵🔁',tags:['têxtil'],lvl:5,planet:9,tier:'épico',xp:150,recipe:['fiber','nanotube','self_repair']},
+      {out:'smart_window',name:'Janela Anti-Ofuscamento',emoji:'🪟🔆',tags:['construção'],lvl:5,planet:9,tier:'épico',xp:150,recipe:['glass','metamaterial','polarization']},
+      {out:'piezo_road',name:'Estrada Autocarregadora',emoji:'🛣️⚡',tags:['infra'],lvl:5,planet:9,tier:'épico',xp:150,recipe:['asphalt','piezo','traffic']},
+      {out:'bio_concrete',name:'Concreto Autorreciclável',emoji:'🧱🧬',tags:['construção'],lvl:5,planet:9,tier:'épico',xp:150,recipe:['concrete','calc_bacteria','moisture']},
+      {out:'org_battery',name:'Bateria Orgânica Segura',emoji:'🔋🌿',tags:['energia'],lvl:5,planet:9,tier:'épico',xp:150,recipe:['conductive_polymer','aqueous_electrolyte','encapsulation']},
+      {out:'allergen_filter',name:'Filtro Alérgeno-Seletivo',emoji:'🪭🧫',tags:['saúde'],lvl:5,planet:9,tier:'épico',xp:150,recipe:['membrane','synthetic_antibody','ventilation']},
+      {out:'cool_pavement',name:'Pavimento Fresco',emoji:'🧊🛣️',tags:['urbano'],lvl:5,planet:9,tier:'épico',xp:150,recipe:['reflect_pigment','polymer','texture']},
+      {out:'anti_graffiti',name:'Pintura Antipichação',emoji:'🖌️🚫',tags:['urbano'],lvl:5,planet:9,tier:'épico',xp:150,recipe:['polymer','electrostatic','light_solvent']},
+
+      // ===== PLANETA 10 — SINGULARIDADE (alto conceito) =====
+      {out:'universal_translator',name:'Tradutor Universal',emoji:'🗣️🌍',tags:['comunicação'],lvl:6,planet:10,tier:'lendário',xp:400,recipe:['ai','linguistics','multisensor']},
+      {out:'nanomed',name:'Nanomédicos',emoji:'🧬🤖',tags:['saúde'],lvl:6,planet:10,tier:'lendário',xp:400,recipe:['nanorobotics','diagnosis','vascular_nav']},
+      {out:'quantum_net',name:'Rede Quântica',emoji:'🌀🛜',tags:['comunicação'],lvl:6,planet:10,tier:'lendário',xp:400,recipe:['quantum','network','crypto']},
+      {out:'climate_mesh',name:'Malha Climática',emoji:'🌦️🕸️',tags:['ambiente'],lvl:6,planet:10,tier:'lendário',xp:400,recipe:['sensing','actuators','climate_model']},
+      {out:'planet_digital_twin',name:'Gêmeo Digital Planetário',emoji:'🌍🖥️',tags:['modelagem'],lvl:6,planet:10,tier:'lendário',xp:400,recipe:['simulation','global_data','hpc']},
+      {out:'self_bal_grid',name:'Rede Auto-Balanceável',emoji:'⚡🧠',tags:['energia'],lvl:6,planet:10,tier:'lendário',xp:400,recipe:['ai','grid','market']}
+    ];
+
+    // ---------- Registrar receitas no ITEMS ----------
+    RECIPES.forEach(rc=>{
+      if(!ITEMS[rc.out]) ITEMS[rc.out] = { id:rc.out, name:rc.name, emoji:rc.emoji, tags:rc.tags||[], lvl:rc.lvl||1, planet:rc.planet||1 };
+    });
+
+    // ---------- Localizador de receita ----------
+    function findRecipe(selectedIds){
+      // aceita de 2 a 6 itens
+      for(const r of RECIPES){
+        if (sameCombo(selectedIds, r.recipe)) {
+          return { output:r.out, tier:r.tier||'comum', xpBase:r.xp||10, level:r.lvl||1 };
+        }
+      }
+      return null;
+    }
+    </script>
+  </div> <!-- container -->
+
+</body>
+</html>
