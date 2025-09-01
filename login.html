@@ -1,264 +1,152 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Jogos | Level Up Academy</title>
-  <link rel="stylesheet" href="jogos.css">
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Level Up Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Press Start 2P', monospace;}
+body { background-color: #0f0f1b; color: #fff; height:100vh; display:flex; justify-content:center; align-items:center; overflow:hidden; }
 
-  <style>
-    /* ====================
-       Botões de jogo
-    ==================== */
-    .game-button {
-      display: block;
-      margin: 1rem auto;
-      padding: 20px 15px;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 15px;
-      text-decoration: none;
-      border: 5px solid;
-      cursor: pointer;
-      box-shadow: 0 0 0 4px black;
-      image-rendering: pixelated;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      text-align: center;
-    }
+/* ESTRELAS PIXEL ART */
+.stars-bg {
+  position: fixed; top:0; left:0; width:100vw; height:100vh; z-index:0; overflow:hidden;
+}
+.star-pixel {
+  position:absolute; width:2px; height:2px; background:#fff; opacity:0.7;
+  border-radius:50%; animation:twinkle 2s infinite alternate;
+}
+.star-pixel.large { width:3px; height:3px; }
+.star-pixel:nth-child(2n){ background:#88d3ce; opacity:0.6; }
+.star-pixel:nth-child(3n){ background:#6e45e2; opacity:0.5; }
+@keyframes twinkle { 0%{opacity:0.3;} 50%{opacity:1;} 100%{opacity:0.3;} }
 
-    .game-button:hover {
-      transform: scale(1.04);
-      box-shadow: 0 0 0 4px #fff, 0 0 9px 9px rgba(255, 255, 255, 0.3);
-    }
+/* AURORA BOREAL CAPRICHADA */
+.aurora-layer {
+  position: fixed; top:0; left:-50%; width:200%; height:120%;
+  background: linear-gradient(120deg, rgba(136,211,206,0.3), rgba(110,69,226,0.3), rgba(255,255,255,0.2));
+  filter: blur(60px);
+  transform: skewY(-15deg);
+  z-index:1;
+  animation: auroraMove linear infinite;
+}
 
-    /* Botões ativos */
-    .Reflex_órion {
-      background: linear-gradient(45deg, #00bcd4, #008ba3);
-      color: #fff;
-      border-color: #005f73;
-      text-shadow: 0 0 5px #fff, 0 0 10px #00bcd4;
-      animation: pulse 1.5s infinite;
-    }
+/* Três camadas com velocidades diferentes */
+.aurora1 { animation-duration:18s; opacity:0.5; }
+.aurora2 { animation-duration:25s; opacity:0.35; background: linear-gradient(150deg, rgba(255,255,150,0.2), rgba(136,211,206,0.3), rgba(110,69,226,0.2)); filter: blur(80px); }
+.aurora3 { animation-duration:35s; opacity:0.25; background: linear-gradient(160deg, rgba(255,150,255,0.2), rgba(88,211,206,0.25), rgba(110,69,226,0.15)); filter: blur(100px); }
 
-    .Reflex_órion:hover {
-      background: linear-gradient(45deg, #0097a7, #007c91);
-      box-shadow: 0 0 10px #00bcd4, 0 0 40px #008ba3;
-    }
+@keyframes auroraMove {
+  0% { transform: translateX(-50%) skewY(-15deg); }
+  50% { transform: translateX(-10%) skewY(-15deg); }
+  100% { transform: translateX(-50%) skewY(-15deg); }
+}
 
-    .SINAPSE_ESPACIAL {
-      background: linear-gradient(45deg, #82009c, #008ba3);
-      color: #fff;
-      border-color: #005f73;
-      text-shadow: 0 0 5px #fff, 0 0 10px #00bcd4;
-      animation: pulse 1.5s infinite;
-    }
+/* FORMULÁRIO CENTRAL */
+.login-container {
+  position: relative; z-index: 2;
+  background: rgba(24,24,46,0.9);
+  border:3px solid #6e45e2; border-radius:16px;
+  box-shadow:0 0 24px #6e45e2,0 0 48px #232347 inset;
+  padding:48px 36px; width:360px;
+  display:flex; flex-direction:column; align-items:center;
+}
 
-    .SINAPSE_ESPACIAL:hover {
-      background: linear-gradient(45deg, #0097a7, #007c91);
-      box-shadow: 0 0 10px #00bcd4, 0 0 40px #008ba3;
-    }
+/* TÍTULO COM IMAGEM */
+.login-title {
+  display:flex; flex-direction:column; align-items:center; margin-bottom:32px;
+}
+.login-title img { width:64px; height:64px; margin-bottom:12px; }
+.login-title h2 { color:#88d3ce; text-shadow:0 0 8px #6e45e2; font-size:1.5em; text-align:center; }
 
-    .fatos {
-      background: linear-gradient(45deg, #ff9800, #ff5722);
-      color: #fff;
-      border-color: #e65100;
-      text-shadow: 0 0 5px #fff, 0 0 10px #ff9800;
-      animation: pulse 1.5s infinite;
-    }
+/* INPUTS E BOTÕES */
+.login-container input {
+  width:100%; padding:14px 12px; margin-bottom:20px; border-radius:8px;
+  border:2px solid #6e45e2; background:rgba(24,24,46,0.5); color:#fff;
+  font-size:0.9em; text-shadow:1px 1px 0 #232347; outline:none;
+  transition:0.3s; box-sizing:border-box;
+}
+.login-container input:focus {
+  border-color:#88d3ce; box-shadow:0 0 12px #88d3ce; background:rgba(24,24,46,0.75);
+}
+.login-container button {
+  width:100%; padding:14px; border-radius:8px; border:2px solid #6e45e2;
+  background-color:#232347; color:#00c3ff; font-family:'Press Start 2P';
+  font-size:0.95em; cursor:pointer; transition:0.2s; text-transform:uppercase;
+  box-shadow:0 0 12px #6e45e2;
+}
+.login-container button:hover {
+  background-color:#6e45e2; color:#0f0f1b; box-shadow:0 0 24px #88d3ce;
+}
 
-    .fatos:hover {
-      background: linear-gradient(45deg, #fb8c00, #f4511e);
-      box-shadow: 0 0 10px #ff9800, 0 0 40px #ff5722;
-    }
+/* VISIBILIDADE SUAVE PARA FORMULÁRIOS */
+.form-fields { display:flex; flex-direction:column; width:100%; transition: opacity 0.3s ease; }
+.hidden { opacity:0; pointer-events:none; height:0; margin:0; }
 
-    /* Botões "em breve" com efeito de brilho igual ao primeiro */
-    .em-breve {
-      background: linear-gradient(45deg, #00bcd4, #008ba3);
-      color: #fff;
-      border-color: #005f73;
-      text-shadow: 0 0 5px #fff, 0 0 10px #00bcd4;
-      animation: pulse 1.5s infinite;
-      cursor: not-allowed;
-      opacity: 0.8;
-    }
-
-    @keyframes pulse {
-      0%, 100% {
-        box-shadow: 0 0 15px #00bcd4, 0 0 10px #008ba3;
-      }
-      50% {
-        box-shadow: 0 0 10px #00bcd4, 0 0 30px #008ba3;
-      }
-    }
-
-    /* ====================
-       Layout do container
-    ==================== */
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2rem;
-    }
-
-    .game-row {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      flex-wrap: wrap;
-    }
-
-    /* ====================
-       Perfil flutuante
-    ==================== */
-    .perfil-hover {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      text-align: center;
-    }
-
-    .avatar-icone {
-      width: 50px;
-      border-radius: 50%;
-      cursor: pointer;
-    }
-
-    .perfil-info {
-      display: none;
-      background: rgba(0,0,0,0.8);
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 5px;
-    }
-
-    .perfil-hover:hover .perfil-info {
-      display: block;
-    }
-  </style>
+/* RESPONSIVO */
+@media (max-width:400px) { .login-container{ width:90%; padding:36px 24px; } }
+</style>
 </head>
-
 <body>
+<div class="stars-bg"></div>
 
-  <nav class="menu-principal">
-    <ul>
-      <li><a href="LUA.html">Início</a></li>
-      <li><a href="jogos.html">Jogos</a></li>
-      <li><a href="sobre.html">Sobre o Projeto</a></li>
-    </ul>
-  </nav>
+<!-- CAMADAS DE AURORA -->
+<div class="aurora-layer aurora1"></div>
+<div class="aurora-layer aurora2"></div>
+<div class="aurora-layer aurora3"></div>
 
-  <header>
-    <h1>Jogos da Level Up Academy</h1>
-    <div class="level-bar">
-      <span>Nível: <strong>1</strong></span>
-      <div class="xp-bar">
-        <div class="xp-fill" style="width: 35%;"></div>
-      </div>
-      <span>XP: 100 / 1000</span>
-    </div>
-  </header>
-
-  <button onclick="ganharXP()" class="xp-btn">Ganhar XP</button>
-
-  <!-- PERFIL FLUTUANTE -->
-  <div class="perfil-hover">
-    <img src="avatar.png" alt="Avatar do usuário" class="avatar-icone">
-    <div class="perfil-info">
-      <strong>Guilherme</strong>
-      <a href="perfil.html">Meu Perfil</a>
-      <a href="config.html">Configurações</a>
-      <a href="sair.html">Sair</a>
-    </div>
+<div class="login-container">
+  <div class="login-title">
+    <img src="logo.png.jpg" alt="Logo do L.U.A">
+    <h2>L.U.A</h2>
   </div>
 
-  <main class="container">
-    <!-- LINHA 1: Jogos Ativos -->
-    <div class="game-row">
-      <a href="Reflex_órion.html" class="game-button Reflex_órion">Reflex Órion</a>
-      <a href="SINAPSE_ESPACIAL.html" class="game-button SINAPSE_ESPACIAL">SINAPSE ESPACIAL</a>
-      <a href="fatos-historicos.html" class="game-button fatos">Jogar Fatos Históricos</a>
+  <form id="loginForm">
+    <div id="fullForm" class="form-fields">
+      <input type="text" placeholder="Nome" required>
+      <input type="password" placeholder="Senha" required>
+      <input type="password" placeholder="Confirmar Senha" required>
     </div>
-
-    <!-- LINHA 2: Jogos em Breve -->
-    <div class="game-row">
-      <button class="game-button double em-breve" disabled>🔒 Em breve</button>
-      <button class="game-button em-breve" disabled>🔒 Em breve</button>
+    <div id="loginFormFields" class="form-fields hidden">
+      <input type="text" placeholder="Nome" required>
+      <input type="password" placeholder="Senha" required>
     </div>
-  </main>
+    <button type="submit">Entrar</button>
+  </form>
 
-  <!-- Áudio do clique -->
-  <audio id="clickSound" src="star.mp3" preload="auto" playsinline></audio>
+  <p style="margin-top:12px; cursor:pointer; color:#88d3ce; text-shadow:0 0 4px #6e45e2;" id="toggleForm">Já possui conta? Clique aqui</p>
+</div>
 
-  <!-- Script XP -->
-  <script>
-    let xpAtual = 100;
-    let xpMaximo = 1000;
-    let nivel = 1;
+<script>
+// ESTRELAS PIXEL ART
+const starsBg = document.querySelector('.stars-bg');
+for(let i=0;i<120;i++){
+  const star = document.createElement('div');
+  star.className='star-pixel';
+  if(Math.random()>0.8) star.classList.add('large');
+  star.style.top=Math.random()*100+'vh';
+  star.style.left=Math.random()*100+'vw';
+  star.style.animationDelay=(Math.random()*2)+'s';
+  starsBg.appendChild(star);
+}
 
-    function atualizarXP() {
-      const xpBarra = document.querySelector('.xp-fill');
-      const xpTexto = document.querySelector('.level-bar span:last-child');
-      const nivelTexto = document.querySelector('.level-bar span strong');
+// TOGGLE FORMULÁRIO
+const toggle = document.getElementById('toggleForm');
+const fullForm = document.getElementById('fullForm');
+const loginFields = document.getElementById('loginFormFields');
 
-      const progresso = (xpAtual / xpMaximo) * 100;
-      xpBarra.style.width = progresso + '%';
-      xpTexto.textContent = `XP: ${xpAtual} / ${xpMaximo}`;
-      nivelTexto.textContent = nivel;
-    }
-
-    function ganharXP() {
-      if (nivel >= 20) return;
-
-      xpAtual += 50;
-      if (xpAtual >= xpMaximo) {
-        xpAtual = xpAtual - xpMaximo;
-        nivel++;
-      }
-      atualizarXP();
-    }
-
-    atualizarXP(); // inicializa
-  </script>
-
-  <!-- Script do som nos botões/links -->
-  <script>
-    (function() {
-      const clickSound = document.getElementById('clickSound');
-      const links = document.querySelectorAll('a, .game-button, .xp-btn');
-
-      function playClick() {
-        try {
-          clickSound.currentTime = 0;
-          const p = clickSound.play();
-          if (p && typeof p.catch === 'function') {
-            p.catch(err => console.warn('Falha ao tocar som:', err));
-          }
-        } catch(e) {
-          console.warn('Erro ao tocar som:', e);
-        }
-      }
-
-      links.forEach(link => {
-        // Toca som ao pressionar
-        link.addEventListener('pointerdown', playClick);
-
-        // Garante que o som toque antes de navegar
-        link.addEventListener('click', function(e) {
-          const href = this.getAttribute('href');
-          const abreOutraPagina = href && href !== '#';
-
-          if (abreOutraPagina) {
-            e.preventDefault();
-            playClick();
-            setTimeout(() => {
-              window.location.href = href;
-            }, 150); // 150ms para ouvir o som
-          } else {
-            playClick();
-          }
-        });
-      });
-    })();
-  </script>
+toggle.addEventListener('click', ()=>{
+  if(fullForm.classList.contains('hidden')){
+    fullForm.classList.remove('hidden');
+    loginFields.classList.add('hidden');
+    toggle.textContent='Já possui conta? Clique aqui';
+  } else {
+    fullForm.classList.add('hidden');
+    loginFields.classList.remove('hidden');
+    toggle.textContent='Não possui conta? Cadastre-se';
+  }
+});
+</script>
 </body>
 </html>
